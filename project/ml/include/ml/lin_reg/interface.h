@@ -3,7 +3,9 @@
  */
 #pragma once
 
-namespace ml::lin_reg
+namespace ml
+{
+namespace lin_reg
 {
 /**
  * @brief Linear regression interface implementation.
@@ -25,4 +27,5 @@ public:
      */
     virtual double predict(const double input) const = 0;
 };
-} // namespace ml::lin_reg
+} // namespace lin_reg
+} // namespace ml

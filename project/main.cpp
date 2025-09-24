@@ -15,6 +15,7 @@
 #include "driver/atmega328p/serial.h"
 #include "driver/atmega328p/timer.h"
 #include "driver/atmega328p/watchdog.h"
+#include "ml/lin_reg/lin_reg.h"
 #include "target/system.h"
 
 using namespace driver::atmega328p;
@@ -52,6 +53,17 @@ void toggleTimerCallback() noexcept { mySys->handleToggleTimerInterrupt(); }
  */
 int main()
 {
+    // Obtain a reference to the singleton serial device instance.
+    auto& serial{Serial::getInstance()};
+    serial.setEnabled(true);
+
+    serial.printf("Hej, Olle\n");
+
+    const double input{0.0};
+    const double output{-50.0};
+
+    serial.printf("Input: %d, output: %d\n", static_cast<int>(input + 0.5), static_cast<int>(output + 0.5));
+
     // Initialize the GPIO devices.
     Gpio led{8U, Gpio::Direction::Output};
     Gpio button{13U, Gpio::Direction::InputPullup, buttonCallback};
@@ -59,9 +71,6 @@ int main()
     // Initialize the timers.
     Timer debounceTimer{300U, debounceTimerCallback};
     Timer toggleTimer{100U, toggleTimerCallback};
-
-    // Obtain a reference to the singleton serial device instance.
-    auto& serial{Serial::getInstance()};
 
     // Obtain a reference to the singleton watchdog timer instance.
     auto& watchdog{Watchdog::getInstance()};

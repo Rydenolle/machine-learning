@@ -16,7 +16,7 @@ driver\atmega328p\source\watchdog.cpp
 
 main.cpp
 
-ml\include\source\lin_reg.cpp
+ml\source\ml\lin_reg\lin_reg.cpp
 
 target\source\system.cpp
 

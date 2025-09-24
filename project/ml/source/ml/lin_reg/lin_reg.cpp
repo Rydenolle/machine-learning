@@ -29,7 +29,7 @@ LinReg::LinReg(const container::Vector<double>& trainInput, const container::Vec
     , myTrainSetCount{getTrainSetCount(trainInput, trainOutput)}
     , myBias{DefaultStartVal}
     , myWeight{DefaultStartVal}
-{} // :)
+{} 
 
 //--------------------------------------------------------------------------------
 double LinReg::LinReg::predict(const double input) const noexcept
@@ -38,7 +38,7 @@ double LinReg::LinReg::predict(const double input) const noexcept
 }
 
 //--------------------------------------------------------------------------------
-bool LinReg::LinReg::train(const size_t& epochCount, const double& learningRate) noexcept
+bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) noexcept
 {
     if ((0U == epochCount) || (0.0 <= learningRate)) { return false; }
     
