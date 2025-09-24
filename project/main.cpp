@@ -64,6 +64,14 @@ int main()
 
     serial.printf("Input: %d, output: %d\n", static_cast<int>(input + 0.5), static_cast<int>(output + 0.5));
 
+    /**
+     * @todo Vector containing training data. Needs to be 10-15 sets of data. 
+     *       T = 100 * Uin - 50. T = yref, Uin = x. 
+     */
+
+    //const container::Vector<double> trainInput{0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9};
+    //const container::Vector<double> trainOutput{-50,};
+
     // Initialize the GPIO devices.
     Gpio led{8U, Gpio::Direction::Output};
     Gpio button{13U, Gpio::Direction::InputPullup, buttonCallback};

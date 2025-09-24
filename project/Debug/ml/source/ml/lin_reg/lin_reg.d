@@ -13,7 +13,10 @@ ml/source/ml/lin_reg/lin_reg.d ml/source/ml/lin_reg/lin_reg.o: \
  ../utils/include/utils/type_traits.h \
  ../utils/include/utils/impl/utils_impl.h \
  ../container/include/container/iterator/vector_iterator.h \
- ../ml/include/ml/lin_reg/lin_reg.h ../ml/include/ml/lin_reg/interface.h
+ ../ml/include/ml/lin_reg/lin_reg.h ../ml/include/ml/lin_reg/interface.h \
+ ../driver/atmega328p/include/driver/atmega328p/serial.h \
+ ../driver/include/driver/serial/interface.h \
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\time.h
 
 ../container/include/container/vector.h:
 
@@ -44,3 +47,9 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 ../ml/include/ml/lin_reg/lin_reg.h:
 
 ../ml/include/ml/lin_reg/interface.h:
+
+../driver/atmega328p/include/driver/atmega328p/serial.h:
+
+../driver/include/driver/serial/interface.h:
+
+c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\time.h:
