@@ -21,7 +21,6 @@ size_t getTrainSetCount(const container::Vector<double>& input,
     return (input.size() <= output.size()) ? input.size() : output.size();
 }
 
-
 /**
  * @brief Get the absolute value of the given number.
  * 
@@ -58,6 +57,7 @@ void initRandom() noexcept
  */
 double randomStartVal() noexcept
 {
+    initRandom();
     // Divide rand() / RAND_MAX, beware integer division.
     return rand() / static_cast<double>(RAND_MAX);
 }
@@ -98,8 +98,8 @@ LinReg::LinReg(const container::Vector<double>& trainInput, const container::Vec
     : myTrainInput{trainInput}
     , myTrainOutput{trainOutput}
     , myTrainSetCount{getTrainSetCount(trainInput, trainOutput)}
-    , myBias{DefaultStartVal}
-    , myWeight{DefaultStartVal}
+    , myBias{randomStartVal()}
+    , myWeight{randomStartVal()}
 {} 
 
 //--------------------------------------------------------------------------------

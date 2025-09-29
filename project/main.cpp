@@ -42,7 +42,12 @@ void debounceTimerCallback() noexcept { mySys->handleDebounceTimerInterrupt(); }
  * 
  *        This callback is invoked whenever the toggle timer elapses.
  */
-void toggleTimerCallback() noexcept { mySys->handleToggleTimerInterrupt(); }
+void predictTimerCallback() noexcept { mySys->handlepredictTimerInterrupt(); }
+
+constexpr int round(const double number) noexcept
+{
+    return 0.0 <= number ? static_cast<int>(number + 0.5) : static_cast<int>(number - 0.5);
+}
 
 } // namespace
 
@@ -57,20 +62,42 @@ int main()
     auto& serial{Serial::getInstance()};
     serial.setEnabled(true);
 
-    serial.printf("Hej, Olle\n");
-
-    const double input{0.0};
-    const double output{-50.0};
-
-    serial.printf("Input: %d, output: %d\n", static_cast<int>(input + 0.5), static_cast<int>(output + 0.5));
-
     /**
      * @todo Vector containing training data. Needs to be 10-15 sets of data. 
-     *       T = 100 * Uin - 50. T = yref, Uin = x. 
+     *       T = 100 * Uin - 50.    
+     *       T = yref, Uin = x. 
      */
 
-    //const container::Vector<double> trainInput{0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9};
-    //const container::Vector<double> trainOutput{-50,};
+    const container::Vector<double> trainInput{0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 
+                                               2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9};
+    const container::Vector<double> trainOutput{-50.0, -20.0, 10.0, 40.0, 70.0, 100.0, 130.0, 
+                                                160.0, 190.0, 220.0, 250.0, 280.0, 310.0,};
+
+    ml::lin_reg::LinReg linRegModel{trainInput, trainOutput};
+
+    if (linRegModel.train(1000, 0.1))
+    {
+        for (const auto& x : trainInput)
+        {
+            const auto voltage_mV{x * 1000.0};
+            serial.printf("x = %d mV, yref = %d C\n", round(voltage_mV), round(linRegModel.predict(x)));
+        }
+    }
+    else 
+    {
+        serial.printf("Training failed.");
+        return -1;
+    }
+
+    // Obtain a reference to the singleton ADC instance.
+    auto& adc{Adc::getInstance()};
+    adc.setEnabled(true);
+
+/*     const auto inputVoltage{adc.inputVoltage(2U)};
+    const auto mV{inputVoltage * 1000.0};
+    const auto temp{linRegModel.predict(inputVoltage)};
+
+    serial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n", round(mV), round(temp)); */
 
     // Initialize the GPIO devices.
     Gpio led{8U, Gpio::Direction::Output};
@@ -78,7 +105,12 @@ int main()
 
     // Initialize the timers.
     Timer debounceTimer{300U, debounceTimerCallback};
-    Timer toggleTimer{100U, toggleTimerCallback};
+    Timer predictTimer{60000UL, predictTimerCallback};
+
+    predictTimer.
+
+    // Start the 60 second predict timer.
+    predictTimer.start();
 
     // Obtain a reference to the singleton watchdog timer instance.
     auto& watchdog{Watchdog::getInstance()};
@@ -86,11 +118,8 @@ int main()
     // Obtain a reference to the singleton EEPROM instance.
     auto& eeprom{Eeprom::getInstance()};
 
-    // Obtain a reference to the singleton ADC instance.
-    auto& adc{Adc::getInstance()};
-
     // Initialize the system with the given hardware.
-    target::System system{led, button, debounceTimer, toggleTimer, serial, watchdog, eeprom, adc};
+    target::System system{led, button, debounceTimer, predictTimer, serial, watchdog, eeprom, adc, linRegModel};
     mySys = &system;
 
     // Run the system perpetually on the target MCU.

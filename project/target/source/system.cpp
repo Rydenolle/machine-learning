@@ -9,10 +9,19 @@
 #include "driver/serial/interface.h"
 #include "driver/timer/interface.h"
 #include "driver/watchdog/interface.h"
+#include "ml/lin_reg/interface.h"
 #include "target/system.h"
 
 namespace target
 {
+namespace
+{
+constexpr int round(const double number) noexcept
+{
+    return 0.0 <= number ? static_cast<int>(number + 0.5) : static_cast<int>(number - 0.5);
+}
+} // namespace
+
 /**
  * @brief Structure of LED state parameters.
  */
@@ -27,17 +36,18 @@ namespace LedState
 
 // -----------------------------------------------------------------------------
 System::System(driver::GpioInterface& led, driver::GpioInterface& button,
-               driver::TimerInterface& debounceTimer, driver::TimerInterface& toggleTimer,
+               driver::TimerInterface& debounceTimer, driver::TimerInterface& predictTimer,
                driver::SerialInterface& serial, driver::WatchdogInterface& watchdog,
-               driver::EepromInterface& eeprom, driver::AdcInterface& adc) noexcept
+               driver::EepromInterface& eeprom, driver::AdcInterface& adc, ml::lin_reg::Interface& predict) noexcept
     : myLed{led}
     , myButton{button}
     , myDebounceTimer{debounceTimer}
-    , myToggleTimer{toggleTimer}
+    , myPredictTimer{predictTimer}
     , mySerial{serial}
     , myWatchdog{watchdog}
     , myEeprom{eeprom}
     , myAdc{adc}
+    , myPredict{predict}
 {
     myButton.enableInterrupt(true);
     mySerial.setEnabled(true);
@@ -52,7 +62,7 @@ System::~System() noexcept
     myLed.write(false);
     myButton.enableInterrupt(false);
     myDebounceTimer.stop();
-    myToggleTimer.stop();
+    myPredictTimer.stop();
     myWatchdog.setEnabled(false);
 }
 
@@ -78,10 +88,17 @@ void System::handleDebounceTimerInterrupt() noexcept
 }
 
 // -----------------------------------------------------------------------------
-void System::handleToggleTimerInterrupt() noexcept 
+void System::handlepredictTimerInterrupt() noexcept 
 { 
-    mySerial.printf("Toggling the LED!\n");
-    myLed.toggle(); 
+    // mySerial.printf("Toggling the LED!\n");
+    // myLed.toggle(); 
+
+    // Prediktera temperature i stället, skit i LEDen.
+    const auto inputVoltage{myAdc.inputVoltage(2U)};
+    const auto mV{inputVoltage * 1000.0};
+    const auto temp{myPredict.predict(inputVoltage)};
+ 
+    mySerial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n",  round(mV), round(temp));
 }
 
 // -----------------------------------------------------------------------------
@@ -99,15 +116,25 @@ void System::run() noexcept
 void System::handleButtonPressed() noexcept
 {
     mySerial.printf("Button pressed!\n");
-    myToggleTimer.toggle();
-    writeLedStateToEeprom();
+    // myPredictTimer.toggle();
+    // writeLedStateToEeprom();
 
-    if (myToggleTimer.isEnabled()) { mySerial.printf("Toggle timer enabled!\n"); }
+    const auto inputVoltage{myAdc.inputVoltage(2U)};
+    const auto mV{inputVoltage * 1000.0};
+    const auto temp{myPredict.predict(inputVoltage)};
+ 
+    mySerial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n",  round(mV), round(temp));
+
+    myPredictTimer.restart();
+
+    // Återstarta 60-sekunderstimern.
+
+/*     if (myPredictTimer.isEnabled()) { mySerial.printf("Toggle timer enabled!\n"); }
     else
     {
         mySerial.printf("Toggle timer disabled!\n");
         myLed.write(false);
-    }
+    } */
 }
 
 // -----------------------------------------------------------------------------
@@ -115,7 +142,7 @@ void System::checkLedStateInEeprom() noexcept
 {
     if (readLedStateFromEeprom())
     {
-        myToggleTimer.start();
+        myPredictTimer.start();
         mySerial.printf("Toggle timer enabled!\n");
     }
 }
@@ -123,7 +150,7 @@ void System::checkLedStateInEeprom() noexcept
 // -----------------------------------------------------------------------------
 void System::writeLedStateToEeprom() noexcept
 { 
-    myEeprom.write(LedState::address, myToggleTimer.isEnabled());
+    myEeprom.write(LedState::address, myPredictTimer.isEnabled());
 }
 
 // -----------------------------------------------------------------------------

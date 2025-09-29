@@ -24,6 +24,14 @@ class TimerInterface;
 class WatchdogInterface;
 } // namespace driver
 
+namespace ml
+{
+namespace lin_reg
+{
+class Interface;
+} // namespace lin_reg
+} // namespace ml
+
 namespace target
 {
 /**
@@ -52,16 +60,17 @@ public:
      * @param[in] led The LED to toggle.
      * @param[in] button Button used to toggle the toggle timer.
      * @param[in] debounceTimer Timer used to mitigate effects of contact bounces.
-     * @param[in] toggleTimer Timer used to toggle the LED.
+     * @param[in] predictTimer Timer used to toggle the LED.
      * @param[in] serial Serial device used to print status messages.
      * @param[in] watchdog Watchdog timer that resets the program if it becomes unresponsive.
      * @param[in] eeprom EEPROM stream to write the status of the LED to EEPROM.
      * @param[in] adc ADC (currently unused).
      */
     explicit System(driver::GpioInterface& led, driver::GpioInterface& button, 
-                    driver::TimerInterface& debounceTimer, driver::TimerInterface& toggleTimer,
+                    driver::TimerInterface& debounceTimer, driver::TimerInterface& predictTimer,
                     driver::SerialInterface& serial, driver::WatchdogInterface& watchdog, 
-                    driver::EepromInterface& eeprom, driver::AdcInterface& adc) noexcept;
+                    driver::EepromInterface& eeprom, driver::AdcInterface& adc,
+                    ml::lin_reg::Interface& predict) noexcept;
 
     /**
      * @brief Delete system.
@@ -97,7 +106,7 @@ public:
      * 
      *        Toggle the LED every 100 ms when the associated timer is enabled.
      */
-    void handleToggleTimerInterrupt() noexcept;
+    void handlepredictTimerInterrupt() noexcept;
 
     /**
      * @brief Run the system as long as voltage is supplied.                                                               
@@ -126,7 +135,7 @@ private:
     driver::TimerInterface& myDebounceTimer;
 
     /** Timer used to toggle the LED. */
-    driver::TimerInterface& myToggleTimer;
+    driver::TimerInterface& myPredictTimer;
 
     /** Serial device used to print status messages. */
     driver::SerialInterface& mySerial;
@@ -139,5 +148,7 @@ private:
 
     /** A/D converter (currently unused). */
     driver::AdcInterface& myAdc;
+
+    ml::lin_reg::Interface& myPredict;
 };
 } // namespace target
