@@ -28,6 +28,7 @@ namespace ml
 {
 namespace lin_reg
 {
+/** Linear regression interface. */
 class Interface;
 } // namespace lin_reg
 } // namespace ml
@@ -60,11 +61,12 @@ public:
      * @param[in] led The LED to toggle.
      * @param[in] button Button used to toggle the toggle timer.
      * @param[in] debounceTimer Timer used to mitigate effects of contact bounces.
-     * @param[in] predictTimer Timer used to toggle the LED.
+     * @param[in] predictTimer Timer used to print predicted temperature.
      * @param[in] serial Serial device used to print status messages.
      * @param[in] watchdog Watchdog timer that resets the program if it becomes unresponsive.
      * @param[in] eeprom EEPROM stream to write the status of the LED to EEPROM.
      * @param[in] adc ADC (currently unused).
+     * @param[in] predict The input voltage of the temperature sensor the model's been trained on.
      */
     explicit System(driver::GpioInterface& led, driver::GpioInterface& button, 
                     driver::TimerInterface& debounceTimer, driver::TimerInterface& predictTimer,
@@ -87,7 +89,7 @@ public:
     /**
      * @brief Button interrupt handler.
      * 
-     *        Toggle the timer whenever the button is pressed. 
+     *        Restart the timer whenever the button is pressed. 
      * 
      *        Pin change interrupts are disabled for 300 ms after a press to mitigate the effects 
      *        of contact bounce.
@@ -102,9 +104,9 @@ public:
     void handleDebounceTimerInterrupt() noexcept;
 
     /**
-     * @brief Toggle timer interrupt handler.
+     * @brief Predict timer interrupt handler.
      * 
-     *        Toggle the LED every 100 ms when the associated timer is enabled.
+     *        Print the predicted temperature when the associated timer is enabled.
      */
     void handlepredictTimerInterrupt() noexcept;
 
@@ -128,13 +130,13 @@ private:
     /** Reference to the LED to toggle. */
     driver::GpioInterface& myLed;
 
-    /** Button used to toggle the toggle timer. */
+    /** Button used to print the predicted temperature and reset the timer. */
     driver::GpioInterface& myButton;
 
     /** Debounce timer used to mitigate effects of contact bounces. */
     driver::TimerInterface& myDebounceTimer;
 
-    /** Timer used to toggle the LED. */
+    /** Timer used to print predicted temperature. */
     driver::TimerInterface& myPredictTimer;
 
     /** Serial device used to print status messages. */
@@ -149,6 +151,7 @@ private:
     /** A/D converter (currently unused). */
     driver::AdcInterface& myAdc;
 
+    /** The linear regression model that's been modelled after set training data. */
     ml::lin_reg::Interface& myPredict;
 };
 } // namespace target

@@ -16,6 +16,14 @@ namespace target
 {
 namespace
 {
+
+/**
+ * @brief Round a double to nearest integer to be able to print the number.
+ * 
+ * @param[in] number Double number to be rounded, positive or negative.
+ * 
+ * @return Rounded double as an integer.
+ */
 constexpr int round(const double number) noexcept
 {
     return 0.0 <= number ? static_cast<int>(number + 0.5) : static_cast<int>(number - 0.5);
@@ -90,10 +98,6 @@ void System::handleDebounceTimerInterrupt() noexcept
 // -----------------------------------------------------------------------------
 void System::handlepredictTimerInterrupt() noexcept 
 { 
-    // mySerial.printf("Toggling the LED!\n");
-    // myLed.toggle(); 
-
-    // Prediktera temperature i stället, skit i LEDen.
     const auto inputVoltage{myAdc.inputVoltage(2U)};
     const auto mV{inputVoltage * 1000.0};
     const auto temp{myPredict.predict(inputVoltage)};
@@ -116,8 +120,6 @@ void System::run() noexcept
 void System::handleButtonPressed() noexcept
 {
     mySerial.printf("Button pressed!\n");
-    // myPredictTimer.toggle();
-    // writeLedStateToEeprom();
 
     const auto inputVoltage{myAdc.inputVoltage(2U)};
     const auto mV{inputVoltage * 1000.0};
@@ -126,15 +128,6 @@ void System::handleButtonPressed() noexcept
     mySerial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n",  round(mV), round(temp));
 
     myPredictTimer.restart();
-
-    // Återstarta 60-sekunderstimern.
-
-/*     if (myPredictTimer.isEnabled()) { mySerial.printf("Toggle timer enabled!\n"); }
-    else
-    {
-        mySerial.printf("Toggle timer disabled!\n");
-        myLed.write(false);
-    } */
 }
 
 // -----------------------------------------------------------------------------

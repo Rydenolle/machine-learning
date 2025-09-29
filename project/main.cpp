@@ -44,6 +44,13 @@ void debounceTimerCallback() noexcept { mySys->handleDebounceTimerInterrupt(); }
  */
 void predictTimerCallback() noexcept { mySys->handlepredictTimerInterrupt(); }
 
+/**
+ * @brief Round a double to nearest integer to be able to print the number.
+ * 
+ * @param[in] number Double number to be rounded, positive or negative.
+ * 
+ * @return Rounded double as an integer.
+ */
 constexpr int round(const double number) noexcept
 {
     return 0.0 <= number ? static_cast<int>(number + 0.5) : static_cast<int>(number - 0.5);
@@ -62,19 +69,16 @@ int main()
     auto& serial{Serial::getInstance()};
     serial.setEnabled(true);
 
-    /**
-     * @todo Vector containing training data. Needs to be 10-15 sets of data. 
-     *       T = 100 * Uin - 50.    
-     *       T = yref, Uin = x. 
-     */
-
+    // Vector containing training data. Needs to be 10-15 sets of data. 
     const container::Vector<double> trainInput{0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 
                                                2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9};
     const container::Vector<double> trainOutput{-50.0, -20.0, 10.0, 40.0, 70.0, 100.0, 130.0, 
                                                 160.0, 190.0, 220.0, 250.0, 280.0, 310.0,};
 
+    // 
     ml::lin_reg::LinReg linRegModel{trainInput, trainOutput};
 
+    // Train the linear regression model on the training data.
     if (linRegModel.train(1000, 0.1))
     {
         for (const auto& x : trainInput)
@@ -93,12 +97,6 @@ int main()
     auto& adc{Adc::getInstance()};
     adc.setEnabled(true);
 
-/*     const auto inputVoltage{adc.inputVoltage(2U)};
-    const auto mV{inputVoltage * 1000.0};
-    const auto temp{linRegModel.predict(inputVoltage)};
-
-    serial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n", round(mV), round(temp)); */
-
     // Initialize the GPIO devices.
     Gpio led{8U, Gpio::Direction::Output};
     Gpio button{13U, Gpio::Direction::InputPullup, buttonCallback};
@@ -106,8 +104,6 @@ int main()
     // Initialize the timers.
     Timer debounceTimer{300U, debounceTimerCallback};
     Timer predictTimer{60000UL, predictTimerCallback};
-
-    predictTimer.
 
     // Start the 60 second predict timer.
     predictTimer.start();

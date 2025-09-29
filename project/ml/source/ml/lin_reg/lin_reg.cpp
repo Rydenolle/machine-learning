@@ -16,7 +16,7 @@ namespace
 {
 //--------------------------------------------------------------------------------
 size_t getTrainSetCount(const container::Vector<double>& input, 
-                             const container::Vector<double>& output) noexcept
+                        const container::Vector<double>& output) noexcept
 {
     return (input.size() <= output.size()) ? input.size() : output.size();
 }
@@ -86,9 +86,7 @@ void shuffle(container::Vector<size_t>& data) noexcept
     }
 }
 
-/** Default start value for the weight and bias. */
-constexpr auto DefaultStartVal{0.5};
-
+// Initialize Serial to be able to use serial monitor prints.
 auto& serial{driver::atmega328p::Serial::getInstance()};
 
 } // namespace
@@ -111,8 +109,6 @@ double LinReg::LinReg::predict(const double input) const noexcept
 //--------------------------------------------------------------------------------
 bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) noexcept
 {
-   // gamla -> if ((0U == epochCount) || (0.0 <= learningRate)) { return false; }
-
     // Return false if epochCount == 0, learningRate <= 0.0 or trainingSetCount == 0.
     if ((0U == epochCount) || (0.0 >= learningRate) || (0U == myTrainSetCount)) { return false; }
 
@@ -165,7 +161,6 @@ bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) n
         // Stop training if the average error is less than one in a million.
         if (threshold > avgErr)
         {
-            //cout << "Training finished after " << epoch << " epochs!\n";
             serial.printf("Training finished after %d epochs!\n", epoch);
             return true;
         }        
