@@ -1,3 +1,6 @@
+//! \note Bra modifikation av system-klassen. Jag har lite kommentarer om kvarvarande kod från den
+//!       gamla implementationen, duplicerad kod för temperaturprediktion samt hardkodat pin-nummer
+//!       för temperatursensorn. I övrigt ser det stabilt ut.
 /**
  * @brief Generic system implementation details for an MCU with configurable hardware devices.
  */
@@ -16,7 +19,6 @@ namespace target
 {
 namespace
 {
-
 /**
  * @brief Round a double to nearest integer to be able to print the number.
  * 
@@ -30,6 +32,7 @@ constexpr int round(const double number) noexcept
 }
 } // namespace
 
+//! \note Denna del med LED states och EEPROM kan tas bort.
 /**
  * @brief Structure of LED state parameters.
  */
@@ -61,6 +64,10 @@ System::System(driver::GpioInterface& led, driver::GpioInterface& button,
     mySerial.setEnabled(true);
     myWatchdog.setEnabled(true);
     myEeprom.setEnabled(true);
+
+    //!\note Jag hade tagit bort LED-state + EEPROM grejser om jag var du; det kan dock fungera
+    //!      om EEPROM-biten = 1 kommer din predict-timer att starta. Jag hade bara startar
+    //!      predictTimer geom att skriva myPredict.start() här i stället.
     checkLedStateInEeprom();
 }
 
@@ -98,10 +105,22 @@ void System::handleDebounceTimerInterrupt() noexcept
 // -----------------------------------------------------------------------------
 void System::handlepredictTimerInterrupt() noexcept 
 { 
+    //! \note Dessa fyra rader är identiska med de fyra rader som används för att prediktera 
+    //!       temperaturen i handleButtonPressed(). Om jag var du hade jag skapar en privat
+    //!       metod döpt exempelvis predictTemperature() eller dylikt och kallat på denna i stället.
+    //!       Nu rör det sig bara om fyra rader, så det är fine. 
+    //!
+    //!       En till sak - temperaturesensorns pin-nummer är hardkodat, vilket är fine i detta fall.
+    //!       Ett förbättringsförslag är dock att du låter använder skicka med temperatursensorns
+    //!       pin-nummer till konstruktorn, exempelvis via ytterligare ett ingående argument
+    //!       const uint8_t tempSensorPin. Detta pin-nummer hade också kunnat sparas i en
+    //!       medlemsvariabel const uint8_t myTempSensorPin, så kan man enkelt byta pin-nummer.
+    //!       Detta är dock inget som krävs i uppgiften, men det är bra att tänka på.
+    //! 
     const auto inputVoltage{myAdc.inputVoltage(2U)};
     const auto mV{inputVoltage * 1000.0};
     const auto temp{myPredict.predict(inputVoltage)};
- 
+
     mySerial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n",  round(mV), round(temp));
 }
 
@@ -121,16 +140,17 @@ void System::handleButtonPressed() noexcept
 {
     mySerial.printf("Button pressed!\n");
 
+    //! \note Samma kommentar som ovan.
     const auto inputVoltage{myAdc.inputVoltage(2U)};
     const auto mV{inputVoltage * 1000.0};
     const auto temp{myPredict.predict(inputVoltage)};
  
     mySerial.printf("Real input voltage: %d mV, predicted temperature: %d C!\n",  round(mV), round(temp));
-
     myPredictTimer.restart();
 }
 
 // -----------------------------------------------------------------------------
+//! \note Denna metod är en kvarleva från den gamla implementationen och kan tas bort.
 void System::checkLedStateInEeprom() noexcept
 {
     if (readLedStateFromEeprom())
@@ -141,12 +161,14 @@ void System::checkLedStateInEeprom() noexcept
 }
 
 // -----------------------------------------------------------------------------
+//! \note Denna metod är en kvarleva från den gamla implementationen och kan tas bort.
 void System::writeLedStateToEeprom() noexcept
 { 
     myEeprom.write(LedState::address, myPredictTimer.isEnabled());
 }
 
 // -----------------------------------------------------------------------------
+//! \note Denna metod är en kvarleva från den gamla implementationen och kan tas bort.
 bool System::readLedStateFromEeprom() const noexcept
 {
     uint8_t state{};

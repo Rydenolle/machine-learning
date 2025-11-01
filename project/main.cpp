@@ -1,3 +1,5 @@
+//! \note Koden ser utmärkt ut, förutom kommentaren nedan, som är out of date.
+
 /**
  * @brief Demonstration of GPIO device drivers in C++:
  * 
@@ -9,6 +11,7 @@
  *            - An EEPROM stream is used to store the LED state. On startup, this value is read;
  *              if the last stored state before power down was "on," the LED will automatically blink.
  */
+//! \note Snyggt att du sorterar headerfilerna.
 #include "driver/atmega328p/adc.h"
 #include "driver/atmega328p/eeprom.h"
 #include "driver/atmega328p/gpio.h"
@@ -42,6 +45,8 @@ void debounceTimerCallback() noexcept { mySys->handleDebounceTimerInterrupt(); }
  * 
  *        This callback is invoked whenever the toggle timer elapses.
  */
+//! \note Föredra namngivning mer ren camel case, exempelvis handlePredictTimerInterrupt.
+//!       Notera att jag använde stort P på Predict här.
 void predictTimerCallback() noexcept { mySys->handlepredictTimerInterrupt(); }
 
 /**
@@ -51,6 +56,7 @@ void predictTimerCallback() noexcept { mySys->handlepredictTimerInterrupt(); }
  * 
  * @return Rounded double as an integer.
  */
+//! \note Snyggt!
 constexpr int round(const double number) noexcept
 {
     return 0.0 <= number ? static_cast<int>(number + 0.5) : static_cast<int>(number - 0.5);
@@ -75,12 +81,14 @@ int main()
     const container::Vector<double> trainOutput{-50.0, -20.0, 10.0, 40.0, 70.0, 100.0, 130.0, 
                                                 160.0, 190.0, 220.0, 250.0, 280.0, 310.0,};
 
-    // 
+    //! \note Lägger till kommentar åt dig här.
+    // Implement a linear regression model for temperature prediction.
     ml::lin_reg::LinReg linRegModel{trainInput, trainOutput};
 
     // Train the linear regression model on the training data.
     if (linRegModel.train(1000, 0.1))
     {
+        //! \note Snyggt att se att man får träningen utvärderad redan vid start!
         for (const auto& x : trainInput)
         {
             const auto voltage_mV{x * 1000.0};
@@ -89,6 +97,9 @@ int main()
     }
     else 
     {
+        //! \note Bra att du returnerar en felkod här i stället för att låta programmet löpa på
+        //!       om träningen misslyckas; linReg-modellen är ett centerpiece i denna nya mjukvara
+        //!       och jag anser att man inte bör kunna köra programmet med en otränad sådan.
         serial.printf("Training failed.");
         return -1;
     }

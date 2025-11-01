@@ -1,3 +1,5 @@
+//! \note Utmärkt underklass, bra jobbat!
+
 /**
  * @brief Linear regression implementation details.
  */
@@ -5,6 +7,7 @@
 #include "ml/lin_reg/lin_reg.h"
 #include "driver/atmega328p/serial.h"
 
+//! \note Inkludera standardheaders före lokala headers (gör ingen skillnad, men utgör god praxis).
 #include <stdlib.h>
 #include <time.h>
 
@@ -14,6 +17,8 @@ namespace lin_reg
 {
 namespace
 {
+//! \note Bra tillämpning av lokala funktioner här!
+
 //--------------------------------------------------------------------------------
 size_t getTrainSetCount(const container::Vector<double>& input, 
                         const container::Vector<double>& output) noexcept
@@ -87,11 +92,21 @@ void shuffle(container::Vector<size_t>& data) noexcept
 }
 
 // Initialize Serial to be able to use serial monitor prints.
+
+//! \note Smidigt att du har lagt till en referens till serial-printern här! Ett tips om du stöter på
+//!       detta i industrin. Föredra att användaren får skicka med en referens till Serial-interfacet via 
+//!       konstruktorn när objektet skapas i stället (och lägga till en medlemsvariabel som refererar
+//!       till denna), så blir man inte hårdvarubunden. 
+//!
+//!       För med nedanstående serial-printer måste vi använda en ATmega328P-processor för att det 
+//!       ska fungera. Detta är dock inget som ingår i uppgiften per se, det är lite överkurs,
+//!       men något som är bra att tänka på.
 auto& serial{driver::atmega328p::Serial::getInstance()};
 
 } // namespace
 
 //--------------------------------------------------------------------------------
+//! \note Utmärkt!
 LinReg::LinReg(const container::Vector<double>& trainInput, const container::Vector<double>& trainOutput) noexcept
     : myTrainInput{trainInput}
     , myTrainOutput{trainOutput}
@@ -101,6 +116,7 @@ LinReg::LinReg(const container::Vector<double>& trainInput, const container::Vec
 {} 
 
 //--------------------------------------------------------------------------------
+//! \note Utmärkt!
 double LinReg::LinReg::predict(const double input) const noexcept
 {
     return myWeight * input + myBias;
@@ -109,10 +125,18 @@ double LinReg::LinReg::predict(const double input) const noexcept
 //--------------------------------------------------------------------------------
 bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) noexcept
 {
+    //! \note Väldigt enkelt att följa tack vare dina inline-kommentarer!
+
     // Return false if epochCount == 0, learningRate <= 0.0 or trainingSetCount == 0.
+    //! \note Tack för parenteser + Yoda notation!
     if ((0U == epochCount) || (0.0 >= learningRate) || (0U == myTrainSetCount)) { return false; }
 
     // Create a vector holding indexes of the training sets (for randomizing the training order).
+    //! \note Minidetalj: Du har gjort helt korrekt att markera denna funktion till noexcept trots
+    //!       att minne allokeras dynamiskt, dels då min vektorklass är exception free, och dels
+    //!       för att detta är ett inbyggt system där exceptions är disabled som default för att
+    //!       exceptions är så resurskrävande. Hade du däremot skrivit koden i ett terminalprogram
+    //!       med std::vector hade jag rekommenderat att inte markera denna metod noexcept.
     container::Vector<size_t> trainIndex(myTrainSetCount);
     
     // Add the indexes of the training sets (0, 1, 2... setCount - 1).
@@ -124,7 +148,6 @@ bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) n
         double totalErr{};
 
         // Shuffle the content of trainIndex, i.e., randomize the order of the training sets.
-        
         shuffle(trainIndex);
 
         // Iterate through the training sets one by one, use the random order from trainIndex.
@@ -154,6 +177,10 @@ bool LinReg::LinReg::train(const size_t epochCount, const double learningRate) n
                 totalErr += absVal(e);
             }
         }
+        //! \note Utmärkt att du utvärderar träningen och avbryter när modellen predikterar bra.
+        //!       Dels sparar du tid, dels säkerhetsställer du att modellen inte blir övertränad,
+        //!       vilket t.om. kan minska precisionen (men detta är mindre förekommande när vi
+        //!       använder linjära modeller).
         // Calculate the average error of this epoch.
         const auto avgErr{totalErr / myTrainSetCount};
         constexpr auto threshold{1.0 / 1000000};

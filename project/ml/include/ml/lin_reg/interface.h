@@ -1,3 +1,5 @@
+//! \note Klockrent interface, bra jobbat!
+
 /**
  * @brief Linear regression interface implementation. 
  */

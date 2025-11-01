@@ -1,3 +1,6 @@
+//! \note Utmärkt implementationklass också! Väldigt bra dokumentation, korrect användning
+//!       av C++ keywords med mera.
+
 /**
  * @brief Linear regression implementation.
  */
@@ -24,6 +27,7 @@ public:
      * @param[in] trainInput Reference to readable-only vector containing floats (input data for training).
      * @param[in] trainOutput Reference to readable-only vector containing floats (output data for training).
      */
+    //! \note Denna rad är lite lång och bör delas upp på två rader; försök att inte överstiga 100 tecken per rad.
     explicit LinReg(const container::Vector<double>& trainInput, const container::Vector<double>& trainOutput) noexcept;
     
     /**
@@ -53,6 +57,7 @@ public:
     /**
      * @brief Delete the default constructor, delete copy and move constructors, delete operators.
      */
+    //! \note Utmärkt!
     LinReg()                            = delete;
     LinReg(const LinReg&)               = delete;
     LinReg(LinReg&&)                    = delete;
@@ -60,6 +65,8 @@ public:
     LinReg& operator=(LinReg&&)         = delete;
 
 private:
+    //! \note Bra dokumentation av medlemsvariablerna; det förenklar mycket i längden (om detta
+    //!       exempelvis vore ett långtidsprojekt som många utvecklare kommer jobba på).
 
     /** The training input data. */
     const container::Vector<double>& myTrainInput;

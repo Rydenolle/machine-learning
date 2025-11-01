@@ -24,6 +24,11 @@ class TimerInterface;
 class WatchdogInterface;
 } // namespace driver
 
+//! \note Bra att du fördeklarerar ditt linReg-interface i stället för att inkludera filen direkt.
+//!       Dels minskar du dependencies, som annars alla som inkluderar denna header får, dels
+//!       minskar du kompileringstiden, då alla filer där denna fil inkluderas slipper att
+//!       "ml/lin_reg/interface.h" också klistrar in. Även om den filen är liten så gäller fortfarande
+//!       många bäckar små; många mindre sådana inkluderingen kan i slutändan bli ganska mycket kod.
 namespace ml
 {
 namespace lin_reg
@@ -35,6 +40,7 @@ class Interface;
 
 namespace target
 {
+//! \note Denna kommentar är out of date.
 /**
  * @brief Generic system for an MCU with configurable hardware devices.
  * 
@@ -55,6 +61,8 @@ namespace target
 class System final
 {
 public:
+    //! \note Väldigt tydlig kommentar, även om jag vet ej än vad lysdioden är till för. Jag ser
+    //!       det snart i system.cpp. Om den inte används kan du lägga till (unused) i beskrivningen.
     /**
      * @brief Create a new system.
      *     
@@ -108,6 +116,8 @@ public:
      * 
      *        Print the predicted temperature when the associated timer is enabled.
      */
+    //! \note Som jag skrev i main.cpp, handlePredictTimerInterrupt med sort P i Predict hade 
+    //!       varit att föredra.
     void handlepredictTimerInterrupt() noexcept;
 
     /**
@@ -151,6 +161,7 @@ private:
     /** A/D converter (currently unused). */
     driver::AdcInterface& myAdc;
 
+    //! \note Snyggt att du matchar befintlig kod så väl! Detta blendar in perfekt! 
     /** The linear regression model that's been modelled after set training data. */
     ml::lin_reg::Interface& myPredict;
 };
