@@ -10,7 +10,7 @@ namespace
 {
 /**
  * @brief Print numbers held by the given vector.
- * 
+ *
  * @param[in] numbers Vector holding the numbers to print.
  * @param[in] ostream Output stream to use (default = terminal print).
  */
