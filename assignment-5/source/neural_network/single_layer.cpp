@@ -9,7 +9,15 @@ namespace ml::neural_network
 {
 namespace
 {
-//--------------------------------------------------------------------------------
+/**
+ * @brief Method for making sure the training set count is not larger than the smallest value of
+ *        either the input or the output.
+ *
+ * @param[in] input 2D vector containing float numbers.
+ * @param[in] output 2D vector containing float numbers.
+ *
+ * @return The size of the smallest vector as an unsigned integer.
+ */
 std::size_t getTrainSetCount(const std::vector<std::vector<double>>& input,
                              const std::vector<std::vector<double>>& output) noexcept
 {

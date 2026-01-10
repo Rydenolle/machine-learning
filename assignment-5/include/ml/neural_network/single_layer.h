@@ -1,6 +1,3 @@
-/** neural_network/single_layer.h: Ska innehålla en klass för ett enklare neuralt nätverk med ett 
- * dolt lager. */
-
 /**
  * @brief Single Layer implementation.
  */
@@ -44,7 +41,7 @@ public:
      * @param[in] input The input data to base the prediction on, as a reference to a vector
      *                  containing float numbers.
      *
-     * @return Vadå för något? Kolla stub.h/stub.cpp.
+     * @return The predicted value as a vector containing float numbers.
      */
     const std::vector<double>& predict(const std::vector<double>& input) override;
 
