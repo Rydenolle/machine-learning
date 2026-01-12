@@ -74,7 +74,7 @@ double actFuncDelta(const ActFunc actFunc, const double input) noexcept
             return 0.0;
     }
 }
-} // namespace 
+} // namespace
 
 // -----------------------------------------------------------------------------
 DenseLayer::DenseLayer(const std::size_t nodeCount, const std::size_t weightCount,
@@ -96,6 +96,9 @@ DenseLayer::DenseLayer(const std::size_t nodeCount, const std::size_t weightCoun
     initRandom();
 
     // Initialize all biases and weights with random starting values.
+
+    //! @todo Lägg till detta i en publik metod döpt initParams().
+    //! Lägg även denna metod i interface.
     for (std::size_t i{}; i < nodeCount; ++i)
     {
         myBias[i] = randomStartVal();
@@ -262,5 +265,11 @@ bool DenseLayer::optimize(const std::vector<double>& input, const double learnin
     }
     // Return true to indicate success.
     return true;
+}
+
+// -----------------------------------------------------------------------------
+void DenseLayer::initParams() noexcept
+{
+    // Här lägger du koden!
 }
 } // namespace ml::dense_layer

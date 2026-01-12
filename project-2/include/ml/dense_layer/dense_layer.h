@@ -114,6 +114,11 @@ public:
      */
     bool optimize(const std::vector<double>& input, const double learningRate) noexcept override;
 
+    /**
+     * @brief Initialize parameters (bias and weights) with random values.
+     */
+    //! @todo Lägg till metoddeklaration.
+
     DenseLayer()                             = delete; // No default constructor.
     DenseLayer(const DenseLayer&)            = delete; // No copy constructor.
     DenseLayer(DenseLayer&&)                 = delete; // No move constructor.

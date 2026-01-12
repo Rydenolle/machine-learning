@@ -52,6 +52,10 @@ bool SingleLayer::train(std::size_t epochCount, double learningRate)
     // Return false if any faulty epoch count, train set or learning rate.
     if (0U == myTrainSetCount || 0U == epochCount || 0.0 >= learningRate) { return false; }
 
+    // Återinitierat dense-lagerparametrarna.
+    // myHiddenLayer.initParams();
+    // myOutputLayer.initParams();
+
     // Train for 'epochCount' number of times.
     for (std::size_t epoch{}; epoch < epochCount; ++epoch)
     {
@@ -74,6 +78,7 @@ bool SingleLayer::train(std::size_t epochCount, double learningRate)
             myHiddenLayer.optimize(input, learningRate);
         }
     }
+    //! @todo Beräkna precisionen här! Ta gärna accuracy-metoderna från referenskoden.
     return true;
 
 }

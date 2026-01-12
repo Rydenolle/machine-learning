@@ -74,20 +74,28 @@ void predict(ml::neural_network::Interface& network,
 int main()
 {
     // Implement the neural network parameters as compile-time constants.
-    constexpr std::size_t inputCount{2U};
-    constexpr std::size_t hiddenCount{3U};
+    constexpr std::size_t inputCount{4U};
+    constexpr std::size_t hiddenCount{5U};
     constexpr std::size_t outputCount{1U};
 
     // Implement the number of epochs to train and the learning rate as compile-time constants.
-    constexpr std::size_t epochCount{1000};
-    constexpr double learningRate{0.1};
+    constexpr std::size_t epochCount{10000};
+    constexpr double learningRate{0.01};
 
     // Create training data vectors.
-    const std::vector<std::vector<double>> trainInput{{0,0}, {0,1}, {1,0}, {1,1}};
-    const std::vector<std::vector<double>> trainOutput{{0}, {1}, {1}, {0}};
+
+    // Todo: Lägg till kombinationer 0000 - 1111, träna modellen, se till att nätverket lär sig mönstret.
+    const std::vector<std::vector<double>> trainInput{{0,0,0,0}, {0,0,0,1}, {0,0,1,0}, {0,0,1,1}
+                                                    , {0,1,0,0}, {0,1,0,1}, {0,1,1,0}, {0,1,1,1}
+                                                    , {1,0,0,0}, {1,0,0,1}, {1,0,1,0}, {1,0,1,1}
+                                                    , {1,1,0,0}, {1,1,0,1}, {1,1,1,0}, {1,1,1,1}};
+    const std::vector<std::vector<double>> trainOutput{{0}, {1}, {1}, {0}
+                                                    ,  {1}, {0}, {0}, {1}
+                                                    ,  {1}, {0}, {0}, {1}
+                                                    ,  {0}, {1}, {1}, {0}};
 
     // Create the dense layers.
-    ml::dense_layer::DenseLayer hiddenLayer{hiddenCount, inputCount};
+    ml::dense_layer::DenseLayer hiddenLayer{hiddenCount, inputCount, ml::ActFunc::Tanh};
     ml::dense_layer::DenseLayer outputLayer{outputCount, hiddenCount};
 
     // Create a single-layer neural network.
