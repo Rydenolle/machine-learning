@@ -56,6 +56,19 @@ public:
     bool train(std::size_t epochCount, double learningRate = 0.01);
 
     /**
+     * @todo Add description.
+     */
+    double accuracy(/*const std::vector<std::vector<double>>& trainInput,
+                                const std::vector<std::vector<double>>& trainOutput*/) override;
+
+
+    /**
+     * @todo Add description.
+     */
+    double averageError(const std::vector<double>& input,
+                        const std::vector<double>& reference) override;
+
+    /**
      * @brief Delete the default constructor, delete copy and move constructors, delete operators.
      */
     SingleLayer()                            = delete;

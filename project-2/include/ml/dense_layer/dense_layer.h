@@ -117,7 +117,9 @@ public:
     /**
      * @brief Initialize parameters (bias and weights) with random values.
      */
-    //! @todo Lägg till metoddeklaration.
+    void initParams(std::vector<double>& hiddenLayer,
+                    std::vector<double>& outputLayer) noexcept override;
+
 
     DenseLayer()                             = delete; // No default constructor.
     DenseLayer(const DenseLayer&)            = delete; // No copy constructor.

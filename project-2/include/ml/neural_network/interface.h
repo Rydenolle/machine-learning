@@ -26,5 +26,17 @@ public:
      * @return The predicted value as a vector containing float numbers.
      */
     virtual const std::vector<double>& predict(const std::vector<double>& input) = 0;
+
+    /**
+     * @todo Add description.
+     */
+    virtual double accuracy(/*const std::vector<std::vector<double>>& trainInput,
+                                const std::vector<std::vector<double>>& trainOutput*/) = 0;
+
+    /**
+     * @todo Add description.
+     */
+    virtual double averageError(const std::vector<double>& input,
+                                const std::vector<double>& reference) = 0;
 };
 } // namespace ml::neural_network

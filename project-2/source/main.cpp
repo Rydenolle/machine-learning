@@ -32,7 +32,7 @@ void printNumbers(const std::vector<double>& numbers, std::ostream& ostream = st
 }
 
 /**
- * @brief Perform prediction with the given neural network.
+ * @brief Perform prediction with the given neural network, 1 decimal precision.
  * 
  * @param[in] network Neural network to predict with.
  * @param[in] inputData Input data to predict with.
@@ -68,7 +68,7 @@ void predict(ml::neural_network::Interface& network,
 
 /**
  * @brief Train and predict with a simple neural network.
- * 
+ *
  * @return 0 on success, or -1 on failure.
  */
 int main()

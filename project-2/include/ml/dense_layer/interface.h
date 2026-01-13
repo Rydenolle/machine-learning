@@ -100,10 +100,11 @@ public:
      * @return True if optimization was performed, or false on error.
      */
     virtual bool optimize(const std::vector<double>& input, const double learningRate) = 0;
-    
+
     /**
      * @brief Initialize parameters (bias and weights) with random values.
      */
-    //! @todo Lägg till metoddeklaration.
+    virtual void initParams(std::vector<double>& hiddenLayer, std::vector<double>& outputLayer) = 0;
+
 };
 } // namespace ml::dense_layer

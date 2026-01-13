@@ -267,9 +267,18 @@ bool DenseLayer::optimize(const std::vector<double>& input, const double learnin
     return true;
 }
 
+//! @todo Vet inte hur jag ska implementera den här korrekt i headerfilerna.
 // -----------------------------------------------------------------------------
 void DenseLayer::initParams() noexcept
 {
-    // Här lägger du koden!
+    for (std::size_t i{}; i < nodeCount; ++i)
+    {
+        myBias[i] = randomStartVal();
+
+        for (std::size_t j{}; j < weightCount; ++j)
+        {
+            myWeights[i][j] = randomStartVal();
+        }
+    }
 }
 } // namespace ml::dense_layer
