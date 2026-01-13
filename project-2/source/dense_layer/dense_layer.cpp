@@ -271,11 +271,11 @@ bool DenseLayer::optimize(const std::vector<double>& input, const double learnin
 // -----------------------------------------------------------------------------
 void DenseLayer::initParams() noexcept
 {
-    for (std::size_t i{}; i < nodeCount; ++i)
+    for (std::size_t i{}; i < nodeCount(); ++i)
     {
         myBias[i] = randomStartVal();
 
-        for (std::size_t j{}; j < weightCount; ++j)
+        for (std::size_t j{}; j < weightCount(); ++j)
         {
             myWeights[i][j] = randomStartVal();
         }

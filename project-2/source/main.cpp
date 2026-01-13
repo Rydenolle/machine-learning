@@ -33,7 +33,7 @@ void printNumbers(const std::vector<double>& numbers, std::ostream& ostream = st
 
 /**
  * @brief Perform prediction with the given neural network, 1 decimal precision.
- * 
+ *
  * @param[in] network Neural network to predict with.
  * @param[in] inputData Input data to predict with.
  * @param[in] ostream Output stream to use (default = terminal print).
@@ -79,8 +79,9 @@ int main()
     constexpr std::size_t outputCount{1U};
 
     // Implement the number of epochs to train and the learning rate as compile-time constants.
-    constexpr std::size_t epochCount{10000};
+    constexpr std::size_t epochCount{20000};
     constexpr double learningRate{0.01};
+    constexpr double targetPrecision{0.99};
 
     // Create training data vectors.
 
@@ -101,12 +102,21 @@ int main()
     // Create a single-layer neural network.
     ml::neural_network::SingleLayer network{hiddenLayer, outputLayer, trainInput, trainOutput};
 
-    // Train the network, terminate the program with error code -1 on failure.
-    if (!network.train(epochCount, learningRate))
+    while (1)
     {
-        std::cout << "Training failed!\n";
-        return -1;
+        constexpr double error{-1.0};
+        const auto precision{network.train(epochCount, learningRate)};
+
+        // Terminate the program with error code -1 on failure.
+        if (error == precision)
+        {
+            std::cout << "Training failed!\n";
+            return -1;
+        }
+        std::cout << "Precision: " << std::setprecision(2) <<  precision << "\n";
+        if (targetPrecision <= precision) { break; }
     }
+
     // Perform prediction with the network, then terminate the program.
     predict(network, trainInput);
     return 0;

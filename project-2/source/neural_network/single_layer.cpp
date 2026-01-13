@@ -55,13 +55,11 @@ const std::vector<double>& SingleLayer::predict(const std::vector<double>& input
 }
 
 //--------------------------------------------------------------------------------
-bool SingleLayer::train(std::size_t epochCount, double learningRate)
+double SingleLayer::train(std::size_t epochCount, double learningRate)
 {
+    // Return -1.0 if any faulty epoch count, train set or learning rate.
+    if (0U == myTrainSetCount || 0U == epochCount || 0.0 >= learningRate) { return -1.0; }
 
-    // Return false if any faulty epoch count, train set or learning rate.
-    if (0U == myTrainSetCount || 0U == epochCount || 0.0 >= learningRate) { return false; }
-
-    //! @todo? Återinitierat dense-lagerparametrarna.
     myHiddenLayer.initParams();
     myOutputLayer.initParams();
 
@@ -87,46 +85,39 @@ bool SingleLayer::train(std::size_t epochCount, double learningRate)
             myHiddenLayer.optimize(input, learningRate);
         }
     }
-    //! @todo Beräkna precisionen här! Ta gärna accuracy-metoderna från referenskoden.
-    // return accuracy();
-
-    // i main(?): while train() < 0.99 ?
-    return true;
+    // Return the accuracy as, normalize to 0.0 - 1.0.
+    return accuracy();
 
 }
 
-//! @todo fixa --------------------------------------------------------------------------------
-double SingleLayer::accuracy(/*const std::vector<std::vector<double>>& trainInput,
-                             const std::vector<std::vector<double>>& trainOutput*/)
+// --------------------------------------------------------------------------------
+double SingleLayer::accuracy()
 {
-    //! @note Behövs inte pga finns i train?: if (trainingSetCount() == 0U) { return 0.0; }
     double sum{};
 
     for (std::size_t i{}; i < myTrainSetCount; ++i)
     {
         sum += averageError(myTrainInput[i], myTrainOutput[i]);
     }
-    return 1.0 - sum / myTrainSetCount;
+    const auto avgError{sum / myTrainSetCount};
+    const auto precision{1.0 - avgError};
+    return precision;
 }
 
-//! @todo fixa för accuracy()  -----------------------------------------------------------------------------
-//! @todo implementera i headerfilerna.
+// -----------------------------------------------------------------------------
 double SingleLayer::averageError(const std::vector<double>& input,
                                  const std::vector<double>& reference)
 {
     double error{};
-    //! @todo Behöver predict() vara SingleLayer::predict()?
-    const auto prediction{predict(input)};
-    //! @todo Behövs ej?
-    // checkVectorsMatching(reference, prediction);
 
+    // Get predicted values.
+    const auto prediction{predict(input)};
+
+    // Compare predictet values with expected values (reference), accumulate all deviations.
     for (std::size_t i{}; i < prediction.size(); ++i)
     {
-        // Tog absVal från project-1.
         error += absVal(reference[i] - prediction[i]);
     }
     return error / reference.size();
 }
-
-
 } // namespace ml::neural_network

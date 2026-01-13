@@ -104,7 +104,7 @@ public:
     /**
      * @brief Initialize parameters (bias and weights) with random values.
      */
-    virtual void initParams(std::vector<double>& hiddenLayer, std::vector<double>& outputLayer) = 0;
+    virtual void initParams() = 0;
 
 };
 } // namespace ml::dense_layer

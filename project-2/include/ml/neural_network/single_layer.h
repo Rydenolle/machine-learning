@@ -51,9 +51,9 @@ public:
      * @param[in] epochCount an unsigned integer indicating the amount of training epochs.
      * @param[in] learningRate Learning speed as a float, default 0.01 (1% learning speed).
      *
-     * @return Boolean true if training was implemented, false otherwise.
+     * @return Normalized precision (0.0 - 1.0) post training, or -1.0 on error.
      */
-    bool train(std::size_t epochCount, double learningRate = 0.01);
+    double train(std::size_t epochCount, double learningRate = 0.01);
 
     /**
      * @todo Add description.
