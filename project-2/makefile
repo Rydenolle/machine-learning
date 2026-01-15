@@ -1,26 +1,33 @@
 # Application target.
-TARGET := app
+TARGET := gpiod
+
+# C++ compiler.
+CXX_COMPILER := g++
 
 # Source files.
-SOURCE_FILES := source/dense_layer/dense_layer.cpp\
-                source/driver/button/rpi.cpp \
+SOURCE_FILES := source/driver/button/rpi.cpp \
                 source/driver/gpio/rpi.cpp \
 			    source/driver/led/rpi.cpp \
-                source/main.cpp\
+			    source/main.cpp \
+				source/dense_layer/dense_layer.cpp\
 				source/neural_network/single_layer.cpp\
 
-# Include directory.
-INCLUDE_DIR := include
+# Main include directory.
+INC_DIR := include/
+
+# Linked libraries.
+LINK_LIBS := -lgpiod
 
 # Compiler flags.
-COMPILER_FLAGS := -Wall -Werror -std=c++17 -lgpiod
+# Add flag -DRPI when compiling for Raspberry Pi.
+COMPILER_FLAGS := -Wall -Werror -std=c++17 -I$(INC_DIR) $(LINK_LIBS)
 
-# Build and run the application, then clean as default.
-default: build run clean
+# Build and run the application as default.
+default: build run
 
 # Build the application.
 build:
-	@g++ $(SOURCE_FILES) -o $(TARGET) -I$(INCLUDE_DIR) $(COMPILER_FLAGS)
+	@$(CXX_COMPILER) $(SOURCE_FILES) -o $(TARGET) $(COMPILER_FLAGS)
 
 # Run the application.
 run:
