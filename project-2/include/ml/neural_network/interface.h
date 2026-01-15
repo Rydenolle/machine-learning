@@ -28,13 +28,17 @@ public:
     virtual const std::vector<double>& predict(const std::vector<double>& input) = 0;
 
     /**
-     * @todo Add description.
+     * @brief Virtual method for getting the accuracy of the latest training.
+     *
+     * @return Floating number normalized to 0.0-1.0.
      */
-    virtual double accuracy(/*const std::vector<std::vector<double>>& trainInput,
-                                const std::vector<std::vector<double>>& trainOutput*/) = 0;
+    virtual double accuracy() = 0;
 
     /**
-     * @todo Add description.
+     * @brief Get the average error of predicted values.
+     *
+     * @param[in] input Vector containing the input training data.
+     * @param[in] reference Vector containing the expected values of the training data.
      */
     virtual double averageError(const std::vector<double>& input,
                                 const std::vector<double>& reference) = 0;

@@ -96,9 +96,6 @@ DenseLayer::DenseLayer(const std::size_t nodeCount, const std::size_t weightCoun
     initRandom();
 
     // Initialize all biases and weights with random starting values.
-
-    //! @todo Lägg till detta i en publik metod döpt initParams().
-    //! Lägg även denna metod i interface.
     for (std::size_t i{}; i < nodeCount; ++i)
     {
         myBias[i] = randomStartVal();

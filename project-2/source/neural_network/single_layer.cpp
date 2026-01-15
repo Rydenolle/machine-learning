@@ -113,7 +113,7 @@ double SingleLayer::averageError(const std::vector<double>& input,
     // Get predicted values.
     const auto prediction{predict(input)};
 
-    // Compare predictet values with expected values (reference), accumulate all deviations.
+    // Compare predicted values with expected values (reference), accumulate all deviations.
     for (std::size_t i{}; i < prediction.size(); ++i)
     {
         error += absVal(reference[i] - prediction[i]);

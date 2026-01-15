@@ -95,7 +95,7 @@ int main()
     constexpr std::uint8_t buttonPin2{8U};
     constexpr std::uint8_t buttonPin3{25U};
 
-    //! @todo (stämmer detta?) Implement the total number of buttons, for use in a simulation loop.
+    // Implement the total number of buttons.
     constexpr std::size_t buttonCount{4U};
 
     // Implement the neural network parameters as compile-time constants.
@@ -233,3 +233,6 @@ int main()
 
     return 0;
 }
+
+//! @todo Answer README.md.
+//! @todo (maybe) add #ifdef checks instead of commenting out the testing code.

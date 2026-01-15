@@ -56,14 +56,18 @@ public:
     double train(std::size_t epochCount, double learningRate = 0.01);
 
     /**
-     * @todo Add description.
+     * @brief Get the accuracy of the latest training.
+     *
+     * @return Floating number normalized to 0.0-1.0.
      */
-    double accuracy(/*const std::vector<std::vector<double>>& trainInput,
-                                const std::vector<std::vector<double>>& trainOutput*/) override;
+    double accuracy() override;
 
 
     /**
-     * @todo Add description.
+     * @brief Get the average error of predicted values.
+     *
+     * @param[in] input Vector containing the input training data.
+     * @param[in] reference Vector containing the expected values of the training data.
      */
     double averageError(const std::vector<double>& input,
                         const std::vector<double>& reference) override;
@@ -71,7 +75,7 @@ public:
     /**
      * @brief Delete the default constructor, delete copy and move constructors, delete operators.
      */
-    SingleLayer()                            = delete;
+    SingleLayer()                                 = delete;
     SingleLayer(const SingleLayer&)               = delete;
     SingleLayer(SingleLayer&&)                    = delete;
     SingleLayer& operator=(const SingleLayer&)    = delete;
