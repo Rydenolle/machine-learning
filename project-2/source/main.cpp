@@ -7,6 +7,19 @@
 #include "ml/dense_layer/dense_layer.h"
 #include "ml/neural_network/single_layer.h"
 
+// For testing.
+/*
+#include <chrono>
+#include <thread>
+
+#include "driver/button/stub.h"
+#include "driver/led/stub.h"
+*/
+
+// For "real" use.
+#include "driver/button/rpi.h"
+#include "driver/led/rpi.h"
+
 namespace
 {
 /**
@@ -64,6 +77,8 @@ void predict(ml::neural_network::Interface& network,
     }
     ostream << "--------------------------------------------------------------------------------\n\n";
 }
+
+
 } // namespace
 
 /**
@@ -73,6 +88,16 @@ void predict(ml::neural_network::Interface& network,
  */
 int main()
 {
+    // Implement pin numbers for one LED and four buttons.
+    constexpr std::uint8_t ledPin{21U};
+    constexpr std::uint8_t buttonPin0{25U};
+    constexpr std::uint8_t buttonPin1{8U};
+    constexpr std::uint8_t buttonPin2{7U};
+    constexpr std::uint8_t buttonPin3{1U};
+
+    //! @todo (stämmer detta?) Implement the total number of buttons, for use in a simulation loop.
+    constexpr std::size_t buttonCount{4U};
+
     // Implement the neural network parameters as compile-time constants.
     constexpr std::size_t inputCount{4U};
     constexpr std::size_t hiddenCount{5U};
@@ -84,8 +109,6 @@ int main()
     constexpr double targetPrecision{0.99};
 
     // Create training data vectors.
-
-    // Todo: Lägg till kombinationer 0000 - 1111, träna modellen, se till att nätverket lär sig mönstret.
     const std::vector<std::vector<double>> trainInput{{0,0,0,0}, {0,0,0,1}, {0,0,1,0}, {0,0,1,1}
                                                     , {0,1,0,0}, {0,1,0,1}, {0,1,1,0}, {0,1,1,1}
                                                     , {1,0,0,0}, {1,0,0,1}, {1,0,1,0}, {1,0,1,1}
@@ -101,6 +124,29 @@ int main()
 
     // Create a single-layer neural network.
     ml::neural_network::SingleLayer network{hiddenLayer, outputLayer, trainInput, trainOutput};
+
+    // Use stubs if testing.
+    /*
+    using ledDriver = driver::led::Stub;
+    using buttonDriver = driver::button::Stub;
+    */
+
+    // Use "real" drivers otherwise.
+    using ledDriver = driver::led::Rpi;
+    using buttonDriver = driver::button::Rpi;
+
+    // Create RPi or stub LED and buttons.
+    ledDriver led{ledPin};
+    buttonDriver button0{buttonPin0};
+    buttonDriver button1{buttonPin1};
+    buttonDriver button2{buttonPin2};
+    buttonDriver button3{buttonPin3};
+
+    // Create a vector holding the buttons.
+    const std::vector<driver::button::Interface*> buttons{&button0, &button1, &button2, &button3};
+
+    // Implement previous LED state check.
+    bool prevState{false};
 
     while (1)
     {
@@ -119,5 +165,71 @@ int main()
 
     // Perform prediction with the network, then terminate the program.
     predict(network, trainInput);
+
+    // Vector holding button inputs.
+    std::vector<double> buttonInputs(buttons.size());
+
+    // Test loop with simulated button presses.
+    /*
+    for (std::size_t i{}; i < 16; ++i)
+    {
+        for (std::size_t j{}; j < buttonCount; ++j)
+            buttonInputs[j] = (i & (1U << j)) ? 1.0 : 0.0;
+
+        std::vector<double> output{network.predict(buttonInputs)};
+        const bool state = (output[0] >= 0.5);
+
+        std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n";
+        printNumbers(buttonInputs);
+        std::cout << "\n\n";
+
+        led.write(state);
+
+        if (state != prevState)
+        {
+
+            std::cout << "Result:\n";
+            std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
+
+            prevState = state;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    */
+
+    // Continuous loop - check the buttons, control the LED accordingly.
+    while (1)
+    {
+        const bool eventOccured{button0.hasEventOccurred(driver::button::Edge::Both) ||
+                                button1.hasEventOccurred(driver::button::Edge::Both) ||
+                                button2.hasEventOccurred(driver::button::Edge::Both) ||
+                                button3.hasEventOccurred(driver::button::Edge::Both)};
+
+        if (!eventOccured) { continue; }
+
+        // Convert button states to floating-point numbers to feed it to the neural network.
+        for (std::size_t i{}; i < buttonCount; ++i)
+        {
+            // Check the button, store 1.0 on the input vector if pressed, else 0.0.
+            buttonInputs[i] = buttons[i]->isPressed() ? 1.0 : 0.0;
+        }
+
+        std::vector<double> output{network.predict(buttonInputs)};
+        const bool state{output[0] >= 0.5};
+        led.write(state);
+
+        if (state != prevState)
+        {
+            std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n"
+            printNumbers(buttonInputs);
+            std::cout << "\n\nResult:\n";
+            std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
+
+            prevState = state;
+        }
+
+    }
+
     return 0;
 }

@@ -13,3 +13,8 @@ i dense-lagret.
 4. Erik tipsade om for-loop för att gå igenom varenda knapptryckningssekvens och se om predikerat
 resultat stämmer överens med faktiskt resultat.
 5. Koppla in hårdvara (RPi Zero, knappar, LED).
+
+
+## Simulera knapptryckningar
+### buttons -> buttonInputs -> network -> output -> LED
+- Gör en vektor med flyttal 

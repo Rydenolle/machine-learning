@@ -19,7 +19,7 @@ class Stub final : public Interface
 public:
     /**
      * @brief Constructor.
-     * 
+     *
      * @param[in] pin GPIO pin the button is connected to.
      */
     explicit Stub(const std::uint8_t pin) noexcept
@@ -76,13 +76,13 @@ public:
 
     /**
      * @brief Simulate a button press or release.
-     * 
+     *
      * @param[in] input True to simulate pressed, false for released.
      */
-    void simulateInput(const bool input) noexcept 
-    { 
+    void simulateInput(const bool input) noexcept
+    {
         myPrevInput = myInput;
-        myInput     = input; 
+        myInput     = input;
     }
 
     Stub()                       = delete; // No default constructor.

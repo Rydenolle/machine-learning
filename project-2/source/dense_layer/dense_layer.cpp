@@ -267,7 +267,6 @@ bool DenseLayer::optimize(const std::vector<double>& input, const double learnin
     return true;
 }
 
-//! @todo Vet inte hur jag ska implementera den här korrekt i headerfilerna.
 // -----------------------------------------------------------------------------
 void DenseLayer::initParams() noexcept
 {
