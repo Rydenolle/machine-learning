@@ -90,10 +90,10 @@ int main()
 {
     // Implement pin numbers for one LED and four buttons.
     constexpr std::uint8_t ledPin{21U};
-    constexpr std::uint8_t buttonPin0{25U};
-    constexpr std::uint8_t buttonPin1{8U};
-    constexpr std::uint8_t buttonPin2{7U};
-    constexpr std::uint8_t buttonPin3{1U};
+    constexpr std::uint8_t buttonPin0{1U};
+    constexpr std::uint8_t buttonPin1{7U};
+    constexpr std::uint8_t buttonPin2{8U};
+    constexpr std::uint8_t buttonPin3{25U};
 
     //! @todo (stämmer detta?) Implement the total number of buttons, for use in a simulation loop.
     constexpr std::size_t buttonCount{4U};
