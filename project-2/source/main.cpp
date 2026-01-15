@@ -221,7 +221,7 @@ int main()
 
         if (state != prevState)
         {
-            std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n"
+            std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n";
             printNumbers(buttonInputs);
             std::cout << "\n\nResult:\n";
             std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
