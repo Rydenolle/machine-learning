@@ -179,7 +179,7 @@ int main()
         std::vector<double> output{network.predict(buttonInputs)};
         const bool state = (output[0] >= 0.5);
 
-        std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n";
+        std::cout << "Button inputs:\n";
         printNumbers(buttonInputs);
         std::cout << "\n\n";
 
@@ -221,9 +221,9 @@ int main()
 
         if (state != prevState)
         {
-            std::cout << "Button inputs:\n(LSB -> MSB (sorry!))\n";
+            std::cout << "Button inputs:\n";
             printNumbers(buttonInputs);
-            std::cout << "\n\nResult:\n";
+            std::cout << "\n\nResult:";
             std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
 
             prevState = state;
