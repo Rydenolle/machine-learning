@@ -87,7 +87,7 @@ int main()
             serial.printf("x = %d mV, yref = %d C\n", round(voltage_mV), round(linRegModel.predict(x)));
         }
     }
-    else 
+    else
     {
         serial.printf("Training failed.");
         return -1;
