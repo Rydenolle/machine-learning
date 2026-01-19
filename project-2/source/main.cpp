@@ -67,8 +67,6 @@ void predict(ml::neural_network::Interface& network,
     }
     ostream << "--------------------------------------------------------------------------------\n\n";
 }
-
-
 } // namespace
 
 /**
@@ -153,38 +151,6 @@ int main()
     // Vector holding button inputs.
     std::vector<double> buttonInputs(buttons.size());
 
-<<<<<<< Updated upstream
-    //! @note Test loop with simulated button presses.
-    /*
-    for (std::size_t i{}; i < 16; ++i)
-    {
-        for (std::size_t j{}; j < buttonCount; ++j)
-            buttonInputs[j] = (i & (1U << j)) ? 1.0 : 0.0;
-
-        std::vector<double> output{network.predict(buttonInputs)};
-        const bool state = (output[0] >= 0.5);
-
-        std::cout << "Button inputs:\n";
-        printNumbers(buttonInputs);
-        std::cout << "\n\n";
-
-        led.write(state);
-
-        if (state != prevState)
-        {
-
-            std::cout << "Result:\n";
-            std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
-
-            prevState = state;
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-    */
-
-=======
->>>>>>> Stashed changes
     // Continuous loop - check the buttons, control the LED accordingly.
     while (1)
     {
@@ -215,8 +181,6 @@ int main()
 
             prevState = state;
         }
-
     }
-
     return 0;
 }
