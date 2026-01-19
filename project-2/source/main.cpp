@@ -7,16 +7,6 @@
 #include "ml/dense_layer/dense_layer.h"
 #include "ml/neural_network/single_layer.h"
 
-//! @note For testing.
-/*
-#include <chrono>
-#include <thread>
-
-#include "driver/button/stub.h"
-#include "driver/led/stub.h"
-*/
-
-//! @note For "real" use.
 #include "driver/button/rpi.h"
 #include "driver/led/rpi.h"
 
@@ -125,13 +115,7 @@ int main()
     // Create a single-layer neural network.
     ml::neural_network::SingleLayer network{hiddenLayer, outputLayer, trainInput, trainOutput};
 
-    //! @note Use stubs if testing.
-    /*
-    using ledDriver = driver::led::Stub;
-    using buttonDriver = driver::button::Stub;
-    */
-
-    //! @note Use "real" drivers otherwise.
+    // Implement aliases for LED and button drivers.
     using ledDriver = driver::led::Rpi;
     using buttonDriver = driver::button::Rpi;
 
@@ -169,6 +153,7 @@ int main()
     // Vector holding button inputs.
     std::vector<double> buttonInputs(buttons.size());
 
+<<<<<<< Updated upstream
     //! @note Test loop with simulated button presses.
     /*
     for (std::size_t i{}; i < 16; ++i)
@@ -198,6 +183,8 @@ int main()
     }
     */
 
+=======
+>>>>>>> Stashed changes
     // Continuous loop - check the buttons, control the LED accordingly.
     while (1)
     {
@@ -233,5 +220,3 @@ int main()
 
     return 0;
 }
-
-//! @todo (maybe) add #ifdef checks instead of commenting out the testing code.
