@@ -7,16 +7,6 @@
 #include "ml/dense_layer/dense_layer.h"
 #include "ml/neural_network/single_layer.h"
 
-//! @note For testing.
-/*
-#include <chrono>
-#include <thread>
-
-#include "driver/button/stub.h"
-#include "driver/led/stub.h"
-*/
-
-//! @note For "real" use.
 #include "driver/button/rpi.h"
 #include "driver/led/rpi.h"
 
@@ -77,8 +67,6 @@ void predict(ml::neural_network::Interface& network,
     }
     ostream << "--------------------------------------------------------------------------------\n\n";
 }
-
-
 } // namespace
 
 /**
@@ -125,13 +113,7 @@ int main()
     // Create a single-layer neural network.
     ml::neural_network::SingleLayer network{hiddenLayer, outputLayer, trainInput, trainOutput};
 
-    //! @note Use stubs if testing.
-    /*
-    using ledDriver = driver::led::Stub;
-    using buttonDriver = driver::button::Stub;
-    */
-
-    //! @note Use "real" drivers otherwise.
+    // Implement aliases for LED and button drivers.
     using ledDriver = driver::led::Rpi;
     using buttonDriver = driver::button::Rpi;
 
@@ -169,36 +151,7 @@ int main()
     // Vector holding button inputs.
     std::vector<double> buttonInputs(buttons.size());
 
-    //! @note Test loop with simulated button presses.
-    /*
-    for (std::size_t i{}; i < 16; ++i)
-    {
-        for (std::size_t j{}; j < buttonCount; ++j)
-            buttonInputs[j] = (i & (1U << j)) ? 1.0 : 0.0;
-
-        std::vector<double> output{network.predict(buttonInputs)};
-        const bool state = (output[0] >= 0.5);
-
-        std::cout << "Button inputs:\n";
-        printNumbers(buttonInputs);
-        std::cout << "\n\n";
-
-        led.write(state);
-
-        if (state != prevState)
-        {
-
-            std::cout << "Result:\n";
-            std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
-
-            prevState = state;
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-    */
-
-    //! @note "Real use" continuous loop - check the buttons, control the LED accordingly.
+    // Continuous loop - check the buttons, control the LED accordingly.
     while (1)
     {
         const bool eventOccured{button0.hasEventOccurred(driver::button::Edge::Both) ||
@@ -228,10 +181,6 @@ int main()
 
             prevState = state;
         }
-
     }
-
     return 0;
 }
-
-//! @todo (maybe) add #ifdef checks instead of commenting out the testing code.
