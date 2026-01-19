@@ -7,8 +7,13 @@
 #include "ml/dense_layer/dense_layer.h"
 #include "ml/neural_network/single_layer.h"
 
-#include "driver/button/rpi.h"
-#include "driver/led/rpi.h"
+// For testing.
+#include <chrono>
+#include <thread>
+
+#include "driver/button/stub.h"
+#include "driver/led/stub.h"
+
 
 namespace
 {
@@ -115,9 +120,9 @@ int main()
     // Create a single-layer neural network.
     ml::neural_network::SingleLayer network{hiddenLayer, outputLayer, trainInput, trainOutput};
 
-    // Implement aliases for LED and button drivers.
-    using ledDriver = driver::led::Rpi;
-    using buttonDriver = driver::button::Rpi;
+    // Use stubs if testing.
+    using ledDriver = driver::led::Stub;
+    using buttonDriver = driver::button::Stub;
 
     // Create RPi or stub LED and buttons.
     ledDriver led{ledPin};
@@ -153,9 +158,7 @@ int main()
     // Vector holding button inputs.
     std::vector<double> buttonInputs(buttons.size());
 
-<<<<<<< Updated upstream
-    //! @note Test loop with simulated button presses.
-    /*
+    // Test loop with simulated button presses.
     for (std::size_t i{}; i < 16; ++i)
     {
         for (std::size_t j{}; j < buttonCount; ++j)
@@ -180,42 +183,6 @@ int main()
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-    */
-
-=======
->>>>>>> Stashed changes
-    // Continuous loop - check the buttons, control the LED accordingly.
-    while (1)
-    {
-        const bool eventOccured{button0.hasEventOccurred(driver::button::Edge::Both) ||
-                                button1.hasEventOccurred(driver::button::Edge::Both) ||
-                                button2.hasEventOccurred(driver::button::Edge::Both) ||
-                                button3.hasEventOccurred(driver::button::Edge::Both)};
-
-        if (!eventOccured) { continue; }
-
-        // Convert button states to floating-point numbers to feed it to the neural network.
-        for (std::size_t i{}; i < buttonCount; ++i)
-        {
-            // Check the button, store 1.0 on the input vector if pressed, else 0.0.
-            buttonInputs[i] = buttons[i]->isPressed() ? 1.0 : 0.0;
-        }
-
-        std::vector<double> output{network.predict(buttonInputs)};
-        const bool state{output[0] >= 0.5};
-        led.write(state);
-
-        if (state != prevState)
-        {
-            std::cout << "Button inputs:\n";
-            printNumbers(buttonInputs);
-            std::cout << "\n\nResult:";
-            std::cout << (state ? ".~~* LED\tON *~~." : "*:.. LED\tOFF ..:*") << "\n\n";
-
-            prevState = state;
-        }
-
     }
 
     return 0;
