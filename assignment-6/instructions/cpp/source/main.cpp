@@ -17,7 +17,7 @@ constexpr bool UseStubs{false};
 
 /**
  * @brief Predict and print with the given CNN (Convolutional Neural Network).
- * 
+ *
  * @param[in] cnn The CNN with which to predict.
  * @param[in] inputs Input sets to predict with.
  */
@@ -34,10 +34,10 @@ void predictAndPrint(ml::cnn::Interface& cnn, const ml::Matrix3d& inputs) noexce
     {
         std::cout << "Input:\n";
         ml::printMatrix(input);
-        
+
         std::cout << "\nPrediction:\n";
         ml::printMatrix(cnn.predict(input));
-        
+
         // Add a blank line before the next print.
         if (&input != last)  {std::cout << "\n";}
     }

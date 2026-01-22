@@ -6,3 +6,8 @@ kernel/filter 2x2 kör feedforward. Varje 2x2-ruta multipliceras med vårat filt
 
 max-poolinglagret går igenom feature map och tar ut de mest framträdande attributen (rutorna med
 högst värde i en 2x2-scan av feature map).
+
+
+Du får ta Eriks exempel från L25, men det ska implementeras som en KLASS, inte en struct.
+Structen finns i branchen 'conv'.
+
