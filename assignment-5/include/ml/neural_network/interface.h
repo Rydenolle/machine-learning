@@ -1,3 +1,5 @@
+/** @note Denna fil är klockren! */
+
 /**
  * @brief Neural network interface implementation.
  */
