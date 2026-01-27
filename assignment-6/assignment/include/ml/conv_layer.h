@@ -1,1 +1,0 @@
-//! @todo Implement base class ConvLayer, inherited from interface.h

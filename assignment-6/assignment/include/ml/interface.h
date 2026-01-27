@@ -1,1 +1,0 @@
-//! @todo Implement interface that can be inherited by conv_layer.h/.cpp.

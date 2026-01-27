@@ -23,7 +23,7 @@ INCLUDE_DIR := -I include
 COMPILER_FLAGS := -Wall -Werror -std=c++17 -DSTUB
 
 # Build and run the target as default.
-default: build run
+default: build run clean
 
 # Build the target.
 build:
