@@ -1,8 +1,17 @@
+/** @note Utmärkt jobbat med denna fil! Du fick några kommentar, men annars klockrent. */
 /**
  * @brief Single Layer implementation.
  */
 #pragma once
 
+/** @note Sortera helst dina alfabetiskt. Headern <vector> bör också inkluderas, då du
+ *        använder den direkt; nu får du en indirekt inkludering via ditt interface, men tänk
+ *        att om den hade tagits bort därifrån "i framtiden" (tänk ett projekt i industrin) hade 
+ *        man behövt gå in här och ändra också. Just för ditt interface är det nog lugnt; ändrar
+ *        man i det behöver man ju ändra här, men jag tänker mer i allmänhet. Det är god praxis
+ *        att alltid inkludera filer direkt (och hade du kört med något lint-verktyg är chansen
+ *        rätt stor att du hade fått en varning om detta).
+ */
 #include "ml/neural_network/interface.h"
 #include "ml/dense_layer/interface.h"
 
@@ -25,6 +34,11 @@ public:
      * @param[in] trainOutput Reference to readable-only vector containing floats.
      *
      * @note Jag är inte säker på hur jag ska beskriva 'hiddenLayer' och 'outputLayer'.
+     * @note Dina kommentarer är bra. Jag hade tagit bort dense layer interface på slutet dock.
+     */
+    /** @note Märk konstruktorn med nyckelordet `explicit` framför konstruktorns namn.
+     *        Se denna länk för mer info: 
+     *        https://github.com/Yrgo-24/machine-learning/tree/main/lectures/L04#nyckelordet-explicit
      */
     SingleLayer(dense_layer::Interface& hiddenLayer, dense_layer::Interface& outputLayer,
                 const std::vector<std::vector<double>>& trainInput,
@@ -43,6 +57,9 @@ public:
      *
      * @return The predicted value as a vector containing float numbers.
      */
+    /** @note Märk denna metod noexcept om du inte manuellt kastar något undantag
+     *        och inte omallokerar en vektor etc.
+     */
     const std::vector<double>& predict(const std::vector<double>& input) override;
 
     /**
@@ -53,19 +70,22 @@ public:
      *
      * @return Boolean true if training was implemented, false otherwise.
      */
+    /** @note Märk denna metod noexcept om du inte manuellt kastar något undantag
+     *        och inte omallokerar en vektor etc.
+     */
     bool train(std::size_t epochCount, double learningRate = 0.01);
 
     /**
      * @brief Delete the default constructor, delete copy and move constructors, delete operators.
      */
-    SingleLayer()                            = delete;
+    /** @note Snyggt! */
+    SingleLayer()                                 = delete;
     SingleLayer(const SingleLayer&)               = delete;
     SingleLayer(SingleLayer&&)                    = delete;
     SingleLayer& operator=(const SingleLayer&)    = delete;
     SingleLayer& operator=(SingleLayer&&)         = delete;
 
 private:
-
     /** The hidden layer of the network. */
     dense_layer::Interface& myHiddenLayer;
 
@@ -80,6 +100,5 @@ private:
 
     /** The amount of complete training sets, where there's the same amount of input/output data. */
     const std::size_t myTrainSetCount;
-
 };
 } // namespace ml::neural_network
