@@ -36,7 +36,7 @@ ConvLayerPtr Factory::convLayer(const std::size_t inputSize, const std::size_t k
 {
     // Ignore activation function in this implementation.
     (void) (actFunc);
-    
+
     return std::make_unique<conv_layer::ConvLayer>(inputSize, kernelSize);
 }
 
@@ -51,14 +51,14 @@ DenseLayerPtr Factory::denseLayer(const std::size_t inputSize, const std::size_t
 FlattenLayerPtr Factory::flattenLayer(const std::size_t inputSize) 
 {
     ///! @todo Replace flatten_layer::Stub with flatten_layer::Flatten when implemented.
-    return std::make_unique<flatten_layer::Stub>(inputSize);
+    return std::make_unique<flatten_layer::FlattenLayer>(inputSize);
 }
 
 // -----------------------------------------------------------------------------
 ConvLayerPtr Factory::maxPoolLayer(const std::size_t inputSize, const std::size_t poolSize)
 {
     ///! @todo Replace conv_layer::MaxPoolStub with conv_layer::MaxPool when implemented.
-    return std::make_unique<conv_layer::MaxPoolStub>(inputSize, poolSize);
+    return std::make_unique<conv_layer::MaxPoolLayer>(inputSize, poolSize);
 }
 
 // -----------------------------------------------------------------------------

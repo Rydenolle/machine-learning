@@ -7,18 +7,25 @@
 #include <vector>
 
 #include "ml/conv_layer/interface.h"
+#include "ml/act_func/relu.h"
 #include "ml/types.h"
 #include "ml/utils.h"
-#include "ml/act_func/relu.h"
-
 
 namespace ml::conv_layer
 {
-class MaxPoolLayerLayer final : public Interface
+class MaxPoolLayer final : public Interface
 {
 public:
     /**
-     * @brief Destructor. '
+     * @brief Constructor.
+     * 
+     * @param[in] inputSize Input size. Must be greater than 0.
+     * @param[in] poolSize Pool size. Must divide the input size.
+     */
+    explicit MaxPoolLayer(const std::size_t inputSize, const std::size_t poolSize);
+
+    /**
+     * @brief Destructor.
      */
     ~MaxPoolLayer() noexcept override = default;
 
@@ -80,7 +87,7 @@ public:
     /**
      * @brief Delete the default constructor, delete copy and move constructors, delete operators.
      */
-    MaxPoolLayer()                           = delete;
+    MaxPoolLayer()                                = delete;
     MaxPoolLayer(const MaxPoolLayer&)             = delete;
     MaxPoolLayer(MaxPoolLayer&&)                  = delete;
     MaxPoolLayer& operator=(const MaxPoolLayer&)  = delete;
@@ -95,10 +102,8 @@ private:
 
     /** Output matrix. */
     Matrix2d myOutput;
+
+    /** Relu. */
+    act_func::Relu myActFunc;
 };
 } // namespace ml::conv_layer
-
-//! @todo Implement the ml::conv_layer::MaxPoolLayer class here.
-
-//! @todo When you have implemented this class, update the factory (source/ml/factory/factory.cpp) 
-//!       to use it instead of the stub.

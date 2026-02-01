@@ -1,6 +1,7 @@
 /**
  * @brief Convolutional layer implementation details.
  */
+#include <vector>
 #include <cstdlib>
 #include <sstream>
 

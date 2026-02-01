@@ -8,11 +8,8 @@
 
 #include "ml/act_func/relu.h"
 #include "ml/conv_layer/interface.h"
-// types.h contains Matrix aliases.
 #include "ml/types.h"
-// utils.h contains helper functions.
 #include "ml/utils.h"
-
 
 namespace ml::conv_layer
 {
@@ -21,13 +18,14 @@ class ConvLayer final : public Interface
 public:
     /**
      * @brief Constructor.
-     * 
+     *
      * @param[in] inputSize Input size as a size_t. Must be > 0.
      * @param[in] kernelSize Kernel size as a size_t. Must be > 0 and < input size
      */
     explicit ConvLayer(const std::size_t inputSize, const std::size_t kernelSize);
-    /** 
-     * @brief Destructor. 
+
+    /**
+     * @brief Destructor.
      */
     ~ConvLayer() noexcept override = default;
 
@@ -136,14 +134,31 @@ private:
         }
     }
 
+    /** Input matrix (padded with zeros). */
     Matrix2d myInputPadded;
+
+    /** Input gradient matrix (padded with zeros). */
     Matrix2d myInputGradientsPadded;
+
+    /** Input gradient matrix (without padding). */
     Matrix2d myInputGradients;
+
+    /** Kernel matrix (holding weights). */
     Matrix2d myKernel;
+
+    /** Kernel gradient matrix. */
     Matrix2d myKernelGradients;
+
+    /** Output matrix. */
     Matrix2d myOutput;
+
+    /** Bias value. */
     double myBias;
+
+    /** Bias gradient. */
     double myBiasGradient;
+
+    /** Relu. */
     act_func::Relu myActFunc;
 
 };

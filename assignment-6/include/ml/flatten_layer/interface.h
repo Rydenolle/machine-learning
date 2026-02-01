@@ -3,6 +3,9 @@
  */
 #pragma once
 
+#include <cstdlib>
+#include <vector>
+
 #include "ml/types.h"
 
 namespace ml::flatten_layer
