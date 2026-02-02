@@ -61,8 +61,8 @@ int main()
     constexpr ml::act_func::Type denseFunc{ml::act_func::Type::Tanh};
 
     // Training parameters.
-    constexpr std::size_t epochCount{20000U};
-    constexpr double learningRate{0.01};
+    constexpr std::size_t epochCount{2000U};
+    constexpr double learningRate{0.025};
 
     // Input data for training (digits 0 - 1).
     const ml::Matrix3d inputs{

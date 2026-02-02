@@ -34,10 +34,7 @@ ActFuncPtr Factory::actFunc(const act_func::Type type)
 ConvLayerPtr Factory::convLayer(const std::size_t inputSize, const std::size_t kernelSize, 
                              const act_func::Type actFunc) 
 {
-    // Ignore activation function in this implementation.
-    (void) (actFunc);
-
-    return std::make_unique<conv_layer::ConvLayer>(inputSize, kernelSize);
+    return std::make_unique<conv_layer::ConvLayer>(inputSize, kernelSize, actFunc);
 }
 
 // -----------------------------------------------------------------------------
