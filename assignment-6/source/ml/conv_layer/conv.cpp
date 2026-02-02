@@ -56,6 +56,15 @@ ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize,
     initMatrix(myKernelGradients, kernelSize);
     initMatrix(myOutput, inputSize);
 
+    // Initialize the kernel with random values.
+    for (std::size_t ki{}; ki < kernelSize; ++ki)
+    {
+        for (std::size_t kj{}; kj < kernelSize; ++kj)
+        {
+            myKernel[ki][kj] = randomStartVal();
+        }
+    }
+
     // Create activation function instance with a factory.
     ml::factory::Factory factory{};
     myActFunc = factory.actFunc(actFuncType);
