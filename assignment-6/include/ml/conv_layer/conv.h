@@ -105,40 +105,12 @@ private:
      *
      * @param[in] input Input data.
      */
-    void padInput(const Matrix2d& input) noexcept
-    {
-        // Compute the pad offset (the number of zeros in each direction).
-        const std::size_t padOffset{myKernel.size() / 2U};
-
-        // Ensure that the padded input matrix is filled with zeros only.
-        initMatrix(myInputPadded);
-
-        // Copy the input values to the corresponding padded matrix.
-        for (std::size_t i{}; i < myOutput.size(); ++i)
-        {
-            for (std::size_t j{}; j < myOutput.size(); ++j)
-            {
-                myInputPadded[i + padOffset][j + padOffset] = input[i][j];
-            }
-        }
-    }
+    void padInput(const Matrix2d& input) noexcept;
 
     /**
      * @brief Extract input gradients.
      */
-    void extractInputGradients() noexcept
-    {
-        // Compute the pad offset (the number of zeros in each direction).
-        const std::size_t padOffset{myKernel.size() / 2U};
-
-        for (std::size_t i{}; i < myOutput.size(); ++i)
-        {
-            for (std::size_t j{}; j < myOutput.size(); ++j)
-            {
-                myInputGradients[i][j] = myInputGradientsPadded[i + padOffset][j + padOffset];
-            }
-        }
-    }
+    void extractInputGradients() noexcept;
 
     /** Input matrix (padded with zeros). */
     Matrix2d myInputPadded;

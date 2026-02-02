@@ -9,6 +9,7 @@
 #include "ml/types.h"
 #include "ml/utils.h"
 #include "ml/act_func/relu.h"
+
 namespace ml::flatten_layer
 {
 //--------------------------------------------------------------------------------

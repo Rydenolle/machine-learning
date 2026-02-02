@@ -156,6 +156,9 @@ bool MaxPoolLayer::backpropagate(const Matrix2d& outputGradients) noexcept
 }
 
 //--------------------------------------------------------------------------------
-bool MaxPoolLayer::optimize(double learningRate) noexcept { return true; }
-
+bool MaxPoolLayer::optimize(double learningRate) noexcept 
+{
+    // Do nothing - this method is merely implemented to satisfy the interface. 
+    return true; 
+}
 } // namespace ml::conv_layer

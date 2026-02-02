@@ -107,7 +107,6 @@ bool ConvLayer::feedforward(const Matrix2d& input) noexcept
                     sum += myInputPadded[i + ki][j + kj] * myKernel[ki][kj];
                 }
             }
-
             // Pass the sum through the ReLU activation function, store as output.
             myOutput[i][j] = myActFunc->output(sum);
         }
@@ -167,16 +166,50 @@ bool ConvLayer::optimize(double learningRate) noexcept
     // Adjust the bias with the computed bias gradient, multiplied by the learning rate.
     // We subtract, since the gradients are computed in this manner, as opposed to what
     // we've used in dense layer.
-    myBias -= myBiasGradient * learningRate;
+    myBias += myBiasGradient * learningRate;
 
     // Adjust the kernel weights with the corresponding gradients and the learning rate.
     for (std::size_t ki{}; ki < myKernel.size(); ++ki)
     {
         for (std::size_t kj{}; kj < myKernel.size(); ++kj)
         {
-            myKernel[ki][kj] -= myKernelGradients[ki][kj] * learningRate;
+            myKernel[ki][kj] += myKernelGradients[ki][kj] * learningRate;
         }
     }
     return true;
+}
+
+//--------------------------------------------------------------------------------
+void ConvLayer::padInput(const Matrix2d& input) noexcept
+{
+    // Compute the pad offset (the number of zeros in each direction).
+    const std::size_t padOffset{myKernel.size() / 2U};
+
+    // Ensure that the padded input matrix is filled with zeros only.
+    initMatrix(myInputPadded);
+
+    // Copy the input values to the corresponding padded matrix.
+    for (std::size_t i{}; i < myOutput.size(); ++i)
+    {
+        for (std::size_t j{}; j < myOutput.size(); ++j)
+        {
+            myInputPadded[i + padOffset][j + padOffset] = input[i][j];
+        }
+    }
+}
+
+//--------------------------------------------------------------------------------
+void ConvLayer::extractInputGradients() noexcept
+{
+    // Compute the pad offset (the number of zeros in each direction).
+    const std::size_t padOffset{myKernel.size() / 2U};
+
+    for (std::size_t i{}; i < myOutput.size(); ++i)
+    {
+        for (std::size_t j{}; j < myOutput.size(); ++j)
+        {
+            myInputGradients[i][j] = myInputGradientsPadded[i + padOffset][j + padOffset];
+        }
+    }
 }
 } // namespace ml::conv_layer
