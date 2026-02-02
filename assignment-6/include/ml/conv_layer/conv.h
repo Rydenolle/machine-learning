@@ -4,12 +4,16 @@
 #pragma once
 
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
-#include "ml/act_func/relu.h"
+#include "ml/act_func/type.h"
 #include "ml/conv_layer/interface.h"
 #include "ml/types.h"
 #include "ml/utils.h"
+
+/** Activation function interface. */
+namespace ml::act_func { class Interface; }
 
 namespace ml::conv_layer
 {
@@ -21,8 +25,10 @@ public:
      *
      * @param[in] inputSize Input size as a size_t. Must be > 0.
      * @param[in] kernelSize Kernel size as a size_t. Must be > 0 and < input size
+     * @param[in] actFuncType Activation function to use (default = none).
      */
-    explicit ConvLayer(const std::size_t inputSize, const std::size_t kernelSize);
+    explicit ConvLayer(const std::size_t inputSize, const std::size_t kernelSize,
+                       const act_func::Type actFuncType = act_func::Type::None);
 
     /**
      * @brief Destructor.
@@ -158,8 +164,7 @@ private:
     /** Bias gradient. */
     double myBiasGradient;
 
-    /** Relu. */
-    act_func::Relu myActFunc;
-
+    /** Activation function implementation. */
+    std::unique_ptr<act_func::Interface> myActFunc;
 };
 } // namespace ml

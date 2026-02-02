@@ -1,19 +1,21 @@
 /**
  * @brief Convolutional layer implementation details.
  */
-#include <vector>
 #include <cstdlib>
+#include <memory>
 #include <sstream>
 
+#include "ml/act_func/interface.h"
 #include "ml/conv_layer/conv.h"
+#include "ml/factory/factory.h"
 #include "ml/types.h"
 #include "ml/utils.h"
-#include "ml/act_func/relu.h"
 
 namespace ml::conv_layer
 {
 //--------------------------------------------------------------------------------
-ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
+ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize,
+                     const act_func::Type actFuncType)
     : myInputPadded{}
     , myInputGradientsPadded{}
     , myInputGradients{}
@@ -22,7 +24,7 @@ ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
     , myOutput{}
     , myBias{randomStartVal()}
     , myBiasGradient{}
-    , myActFunc{}
+    , myActFunc{nullptr}
 {
     // Implement kernel min and max size. Min size can't be 0.
     constexpr std::size_t minKernelSize{1U};
@@ -53,6 +55,10 @@ ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
     initMatrix(myKernel, kernelSize);
     initMatrix(myKernelGradients, kernelSize);
     initMatrix(myOutput, inputSize);
+
+    // Create activation function instance with a factory.
+    ml::factory::Factory factory{};
+    myActFunc = factory.actFunc(actFuncType);
 }
 
 //--------------------------------------------------------------------------------
@@ -94,7 +100,7 @@ bool ConvLayer::feedforward(const Matrix2d& input) noexcept
             }
 
             // Pass the sum through the ReLU activation function, store as output.
-            myOutput[i][j] = myActFunc.output(sum);
+            myOutput[i][j] = myActFunc->output(sum);
         }
     }
     return true;
@@ -122,7 +128,7 @@ bool ConvLayer::backpropagate(const Matrix2d& outputGradients) noexcept
         for (std::size_t j{}; j < myOutput.size(); ++j)
         {
             // Calculate output derivate.
-            const auto delta{outputGradients[i][j] * myActFunc.delta(myOutput[i][j])};
+            const auto delta{outputGradients[i][j] * myActFunc->delta(myOutput[i][j])};
 
             // Accumulate the bias gradient by adding all output delta values.
             myBiasGradient += delta;
@@ -164,5 +170,4 @@ bool ConvLayer::optimize(double learningRate) noexcept
     }
     return true;
 }
-
 } // namespace ml::conv_layer
