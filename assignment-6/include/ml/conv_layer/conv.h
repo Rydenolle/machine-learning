@@ -1,3 +1,5 @@
+//! @note Klockrent efter fixes!
+
 /**
  * @brief Convolutional layer implementation.
  */

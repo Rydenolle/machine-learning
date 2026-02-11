@@ -1,3 +1,5 @@
+//! @note Också klockrent efter fixes.
+
 /**
  * @brief Convolutional layer implementation details.
  */

@@ -1,6 +1,16 @@
+//! @note Förutom ReLU-delarna (attributet myActFunc och inkludering av ml/act_func/relu.h) är 
+//!       innehållet utmärkt!
+//!
+//!       Jag lade också till en sista blank rad - det är bra praxis att göra detta, då parsers,
+//!       filhanterare med mera normalt förväntas avslutas med \n, dvs. en ny rad.
+//!       Ett normalt lint-verktyg hade klagat på detta direkt, men du får nöja dig med att jag
+//!       babblar om det. Jag missar det ofta själv om jag inte har ett lint-verktyg för övrigt.
+
 /**
  * @brief Max pooling layer implementation details.
  */
+
+//! @note Sortera headerfiler alfabetiskt.
 #include <vector>
 #include <cstdlib>
 #include <sstream>
@@ -8,16 +18,18 @@
 #include "ml/conv_layer/max_pool.h"
 #include "ml/types.h"
 #include "ml/utils.h"
+
+//! @note Detta inkluderingsdirektiv kan tas bort.
 #include "ml/act_func/relu.h"
 
 namespace ml::conv_layer
 {
-
 MaxPoolLayer::MaxPoolLayer(const std::size_t inputSize, const std::size_t poolSize)
     : myInput{}
     , myInputGradients{}
     , myOutput{}
-    , myActFunc{}
+    //! @note Detta attribut bör som sagt tas bort.
+    , myActFunc{} 
 {
      // Check the input arguments, throw an exception if invalid.
     if ((0U == inputSize) || (0U == poolSize) || (0U != (inputSize % poolSize)))

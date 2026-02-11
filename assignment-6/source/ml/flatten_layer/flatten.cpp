@@ -1,6 +1,9 @@
+//! @note Även här utmärkt förutom aktiveringsfunktionen.
+
 /**
  * @brief Flatten layer implementation details.
  */
+//! @note Glöm inte att sortera headerfilerna.
 #include <vector>
 #include <cstdlib>
 #include <sstream>
@@ -8,6 +11,8 @@
 #include "ml/flatten_layer/flatten.h"
 #include "ml/types.h"
 #include "ml/utils.h"
+
+//! @note Ta bort!
 #include "ml/act_func/relu.h"
 
 namespace ml::flatten_layer
@@ -16,6 +21,7 @@ namespace ml::flatten_layer
 FlattenLayer::FlattenLayer(const std::size_t inputSize)
     : myInputGradients{}
     , myOutput{}
+    //! @note Ta bort!
     , myActFunc{}
 {
     // Check the input size, throw if invalid.
@@ -82,5 +88,4 @@ bool FlattenLayer::backpropagate(const Matrix1d& outputGradients) noexcept
     // Return true to indicate success.
     return true;
 }
-
 } // namespace ml::flatten_layer
