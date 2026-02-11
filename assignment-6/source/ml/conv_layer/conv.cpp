@@ -1,19 +1,23 @@
+//! @note Också klockrent efter fixes.
+
 /**
  * @brief Convolutional layer implementation details.
  */
-#include <vector>
 #include <cstdlib>
+#include <memory>
 #include <sstream>
 
+#include "ml/act_func/interface.h"
 #include "ml/conv_layer/conv.h"
+#include "ml/factory/factory.h"
 #include "ml/types.h"
 #include "ml/utils.h"
-#include "ml/act_func/relu.h"
 
 namespace ml::conv_layer
 {
 //--------------------------------------------------------------------------------
-ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
+ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize,
+                     const act_func::Type actFuncType)
     : myInputPadded{}
     , myInputGradientsPadded{}
     , myInputGradients{}
@@ -22,7 +26,7 @@ ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
     , myOutput{}
     , myBias{randomStartVal()}
     , myBiasGradient{}
-    , myActFunc{}
+    , myActFunc{nullptr}
 {
     // Implement kernel min and max size. Min size can't be 0.
     constexpr std::size_t minKernelSize{1U};
@@ -53,6 +57,19 @@ ConvLayer::ConvLayer(const std::size_t inputSize, const std::size_t kernelSize)
     initMatrix(myKernel, kernelSize);
     initMatrix(myKernelGradients, kernelSize);
     initMatrix(myOutput, inputSize);
+
+    // Initialize the kernel with random values.
+    for (std::size_t ki{}; ki < kernelSize; ++ki)
+    {
+        for (std::size_t kj{}; kj < kernelSize; ++kj)
+        {
+            myKernel[ki][kj] = randomStartVal();
+        }
+    }
+
+    // Create activation function instance with a factory.
+    ml::factory::Factory factory{};
+    myActFunc = factory.actFunc(actFuncType);
 }
 
 //--------------------------------------------------------------------------------
@@ -92,9 +109,8 @@ bool ConvLayer::feedforward(const Matrix2d& input) noexcept
                     sum += myInputPadded[i + ki][j + kj] * myKernel[ki][kj];
                 }
             }
-
             // Pass the sum through the ReLU activation function, store as output.
-            myOutput[i][j] = myActFunc.output(sum);
+            myOutput[i][j] = myActFunc->output(sum);
         }
     }
     return true;
@@ -122,7 +138,7 @@ bool ConvLayer::backpropagate(const Matrix2d& outputGradients) noexcept
         for (std::size_t j{}; j < myOutput.size(); ++j)
         {
             // Calculate output derivate.
-            const auto delta{outputGradients[i][j] * myActFunc.delta(myOutput[i][j])};
+            const auto delta{outputGradients[i][j] * myActFunc->delta(myOutput[i][j])};
 
             // Accumulate the bias gradient by adding all output delta values.
             myBiasGradient += delta;
@@ -152,17 +168,50 @@ bool ConvLayer::optimize(double learningRate) noexcept
     // Adjust the bias with the computed bias gradient, multiplied by the learning rate.
     // We subtract, since the gradients are computed in this manner, as opposed to what
     // we've used in dense layer.
-    myBias -= myBiasGradient * learningRate;
+    myBias += myBiasGradient * learningRate;
 
     // Adjust the kernel weights with the corresponding gradients and the learning rate.
     for (std::size_t ki{}; ki < myKernel.size(); ++ki)
     {
         for (std::size_t kj{}; kj < myKernel.size(); ++kj)
         {
-            myKernel[ki][kj] -= myKernelGradients[ki][kj] * learningRate;
+            myKernel[ki][kj] += myKernelGradients[ki][kj] * learningRate;
         }
     }
     return true;
 }
 
+//--------------------------------------------------------------------------------
+void ConvLayer::padInput(const Matrix2d& input) noexcept
+{
+    // Compute the pad offset (the number of zeros in each direction).
+    const std::size_t padOffset{myKernel.size() / 2U};
+
+    // Ensure that the padded input matrix is filled with zeros only.
+    initMatrix(myInputPadded);
+
+    // Copy the input values to the corresponding padded matrix.
+    for (std::size_t i{}; i < myOutput.size(); ++i)
+    {
+        for (std::size_t j{}; j < myOutput.size(); ++j)
+        {
+            myInputPadded[i + padOffset][j + padOffset] = input[i][j];
+        }
+    }
+}
+
+//--------------------------------------------------------------------------------
+void ConvLayer::extractInputGradients() noexcept
+{
+    // Compute the pad offset (the number of zeros in each direction).
+    const std::size_t padOffset{myKernel.size() / 2U};
+
+    for (std::size_t i{}; i < myOutput.size(); ++i)
+    {
+        for (std::size_t j{}; j < myOutput.size(); ++j)
+        {
+            myInputGradients[i][j] = myInputGradientsPadded[i + padOffset][j + padOffset];
+        }
+    }
+}
 } // namespace ml::conv_layer

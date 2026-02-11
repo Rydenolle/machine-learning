@@ -1,15 +1,21 @@
+//! @note Klockrent efter fixes!
+
 /**
  * @brief Convolutional layer implementation.
  */
 #pragma once
 
 #include <cstdlib>
+#include <memory>
 #include <vector>
 
-#include "ml/act_func/relu.h"
+#include "ml/act_func/type.h"
 #include "ml/conv_layer/interface.h"
 #include "ml/types.h"
 #include "ml/utils.h"
+
+/** Activation function interface. */
+namespace ml::act_func { class Interface; }
 
 namespace ml::conv_layer
 {
@@ -21,8 +27,10 @@ public:
      *
      * @param[in] inputSize Input size as a size_t. Must be > 0.
      * @param[in] kernelSize Kernel size as a size_t. Must be > 0 and < input size
+     * @param[in] actFuncType Activation function to use (default = none).
      */
-    explicit ConvLayer(const std::size_t inputSize, const std::size_t kernelSize);
+    explicit ConvLayer(const std::size_t inputSize, const std::size_t kernelSize,
+                       const act_func::Type actFuncType = act_func::Type::None);
 
     /**
      * @brief Destructor.
@@ -99,40 +107,12 @@ private:
      *
      * @param[in] input Input data.
      */
-    void padInput(const Matrix2d& input) noexcept
-    {
-        // Compute the pad offset (the number of zeros in each direction).
-        const std::size_t padOffset{myKernel.size() / 2U};
-
-        // Ensure that the padded input matrix is filled with zeros only.
-        initMatrix(myInputPadded);
-
-        // Copy the input values to the corresponding padded matrix.
-        for (std::size_t i{}; i < myOutput.size(); ++i)
-        {
-            for (std::size_t j{}; j < myOutput.size(); ++j)
-            {
-                myInputPadded[i + padOffset][j + padOffset] = input[i][j];
-            }
-        }
-    }
+    void padInput(const Matrix2d& input) noexcept;
 
     /**
      * @brief Extract input gradients.
      */
-    void extractInputGradients() noexcept
-    {
-        // Compute the pad offset (the number of zeros in each direction).
-        const std::size_t padOffset{myKernel.size() / 2U};
-
-        for (std::size_t i{}; i < myOutput.size(); ++i)
-        {
-            for (std::size_t j{}; j < myOutput.size(); ++j)
-            {
-                myInputGradients[i][j] = myInputGradientsPadded[i + padOffset][j + padOffset];
-            }
-        }
-    }
+    void extractInputGradients() noexcept;
 
     /** Input matrix (padded with zeros). */
     Matrix2d myInputPadded;
@@ -158,8 +138,7 @@ private:
     /** Bias gradient. */
     double myBiasGradient;
 
-    /** Relu. */
-    act_func::Relu myActFunc;
-
+    /** Activation function implementation. */
+    std::unique_ptr<act_func::Interface> myActFunc;
 };
 } // namespace ml

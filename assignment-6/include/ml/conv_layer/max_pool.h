@@ -1,3 +1,6 @@
+//! @note Snyggt! Det enda jag kan anmärka på är att du inte behöver använda aktiveringsfunktioner,
+//!       då maxpool-lager inte innehåller träningsbara parametrar, se nedan.
+
 /**
  * @brief Max pooling layer implementation.
  */
@@ -6,6 +9,8 @@
 #include <cstdlib>
 #include <vector>
 
+//! @note ml/act_func/relu.h behöver inte inkluderas, då maxpool-lager inte innehåller
+//!       träningsbara parametrar.
 #include "ml/conv_layer/interface.h"
 #include "ml/act_func/relu.h"
 #include "ml/types.h"
@@ -103,6 +108,7 @@ private:
     /** Output matrix. */
     Matrix2d myOutput;
 
+    //! @note Detta attribut bör tas bort!
     /** Relu. */
     act_func::Relu myActFunc;
 };

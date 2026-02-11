@@ -1,3 +1,6 @@
+//! @note Samma kommentar om aktiveringsfunktioner här som i maxpool-klassen. Ta gärna bort detta.
+//!       I övrigt utmärkt!
+
 /**
  * @brief Flatten layer implementation.
  */
@@ -7,6 +10,8 @@
 #include <vector>
 
 #include "ml/flatten_layer/interface.h"
+
+//! @note Inte heller här används aktiveringsfunktioner, så denna rad kan tas bort.
 #include "ml/act_func/relu.h"
 #include "ml/types.h"
 #include "ml/utils.h"
@@ -87,8 +92,6 @@ public:
     FlattenLayer& operator=(FlattenLayer&&)         = delete;
 
 private:
-
-        
     /** Unflattened input gradients (to pass to the previous layer). */
     Matrix2d myInputGradients;
 
@@ -96,6 +99,7 @@ private:
     Matrix1d myOutput;
 
     /** Relu. */
+    //! @note Detta attribut bör tas bort!
     act_func::Relu myActFunc;
 };
 } // namespace ml::flatten_layer
